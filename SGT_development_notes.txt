@@ -1,0 +1,12 @@
+Bootstrap notes:
+Scales by 12 for increases;
+
+Makes the table elements for bootstrap
+<div class="student-list-container table-responsive">
+        <table class="student-list table">
+
+
+.hidden-lg-up 
+// ^ Bootstrap for hiding mobile stuff on 
+// L (992 px <= desktops < 1200 px) and XL devices (desktops >= 1200px)
+// Still visible for xs, s, and m devices,  
