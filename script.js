@@ -41,15 +41,14 @@ function addStudent() {
     var student = {
         "name": $("#studentName").val(),
         "course": $("#course").val(),
-        "grade": $("#grade").val()
+        "grade": $("#studentGrade").val()
     };
     student_array.push(student);
-    return;
 }
 /**
  * clearAddStudentForm - clears out the form values based on inputIds variable
  */
-function clearAddStudentForm() {
+function clearAddStudentForm(studentName, courseName, studentGrade) {
     $(studentName).val("");
     $(courseName).val("");
     $(studentGrade).val("");
@@ -78,8 +77,11 @@ function updateData() {
  * updateStudentList - loops through global student array and appends each objects data into the student-list-container > list-body
  */
 function updateStudentList(student_array) {
-    for (var i = 0; i < student_array[i].length; i--) {
-
+    var studentKeys = ["name","course", "grade"];
+    for (var i = 0; i < student_array.length; i++) {
+        for (var j = 0; j < studentKeys.length; j++) {
+            $(student_array[i][studentKeys[j]]).appendTo("student-list-container > list-body");
+        }
     }
 }
 /**
@@ -87,9 +89,17 @@ function updateStudentList(student_array) {
  * into the .student_list tbody
  * @param studentObj
  */
-function addStudentToDom(studentObj) {
-    for (var i in studentObj) {
-        studentObj[i]
+function addStudentToDom(student_array) {
+    var keys = ["name", "course", "grade"];
+    for (var i = 0; i < student_array.length; i++) {
+        var studentRow = $("<tr>");
+        for (var j = 0; j < keys.length; j++) {
+            var td = $("<td>");
+            var studentInfo = student_array[i][keys[j]];
+            td.append(studentInfo);
+            studentRow.append(td);
+        }
+        $(".studentListBody").append(studentRow);
     }
 }
 
@@ -104,6 +114,4 @@ function reset() {
 /**
  * Listen for the document to load and reset the data to the initial state
  *  */
-document.addEventListener(load, function(event) {
-
-} )
+// document.addEventListener(load, function(event) {})
