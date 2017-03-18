@@ -99,7 +99,7 @@ function addStudentToDom(student_array) {
             td.append(studentInfo);
             studentRow.append(td);
         }
-        $(".studentListBody").append(studentRow);
+        $(".studentListTable").append(studentRow);
     }
 }
 
@@ -107,11 +107,11 @@ function addStudentToDom(student_array) {
  * reset - resets the application to initial state. Global variables reset, DOM get reset to initial load state
  */
 function reset() {
-
+    var student_array = [];
 };
 
 
 /**
  * Listen for the document to load and reset the data to the initial state
  *  */
-// document.addEventListener(load, function(event) {})
+document.addEventListener(load, reset)
