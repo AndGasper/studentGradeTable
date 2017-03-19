@@ -44,6 +44,10 @@ function addStudent() {
         "grade": $("#studentGrade").val()
     };
     student_array.push(student);
+    updateData(student_array);
+    addStudentToDom(student_array);
+    cancelClicked(student_array);
+
 }
 /**
  * clearAddStudentForm - clears out the form values based on inputIds variable
@@ -68,9 +72,9 @@ function calculateAverage(student_array) {
 /**
  * updateData - centralized function to update the average and call student list update
  */
-function updateData() {
-    updateStudentList();
-    calculateAverage();
+function updateData(student_array) {
+    updateStudentList(student_array);
+    calculateAverage(student_array);
 }
 
 /**
@@ -108,10 +112,10 @@ function addStudentToDom(student_array) {
  */
 function reset() {
     var student_array = [];
-};
+}
 
 
 /**
  * Listen for the document to load and reset the data to the initial state
  *  */
-document.addEventListener(load, reset)
+// document.addEventListener(load, reset);
