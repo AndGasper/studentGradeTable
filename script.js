@@ -117,6 +117,10 @@ function addStudentToDom(student_array) {
             studentRow.append(td);
         }
         $(".studentListTable").append(studentRow);
+        var deleteButton = $("<button>").addClass("btn btn-danger").text("Delete");
+        deleteButton.on("click",removeStudentFromList);
+        deleteButton.on("click", removeStudentFromDom);
+        studentRow.append(deleteButton); // The formatting could use a little work
     }
 }
 
@@ -140,3 +144,21 @@ function reset() {
  * removeStudent function that removes the object in the student_array
  * @param studentObj
  */
+
+function removeStudentFromDom() {
+
+    console.log("Who is this?", this); // this = <button>
+    console.log("Who is my parent row?");
+    console.log($(this).parent()[0]); // $(this).parent()[0] removes that entire row. The [0] index is the table row
+    console.log("Am I the index?", $(this).parent().index()); // Index of the row in the table for removing from student array
+    student_array.splice($(this).parent().index(),1);
+    $(this).parent()[0].remove();
+    console.log(student_array);
+
+
+}
+
+function removeStudentFromList() {
+    console.log("removeStudentFromList function");
+    console.log("Who is this", this);
+}
