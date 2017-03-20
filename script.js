@@ -29,7 +29,7 @@ function addClicked() {
  * cancelClicked - Event Handler when user clicks the cancel button, should clear out student form
  */
 function cancelClicked() {
-    clearAddStudentForm();
+    clearAddStudentForm($("#studentName"),$("#course"),$("#studentGrade"));
 };
 
 /**
@@ -46,7 +46,7 @@ function addStudent() {
     student_array.push(student);
     updateData(student_array);
     addStudentToDom(student_array);
-    clearAddStudentForm(student);
+    clearAddStudentForm($("#studentName"),$("#course"),$("#studentGrade"));
 
 }
 /**
@@ -93,9 +93,22 @@ function updateStudentList(student_array) {
  * into the .student_list tbody
  * @param studentObj
  */
+// function addStudentToDom(student_array) {
+//     var keys = ["name", "course", "grade"];
+//     for (var i = 0; i < student_array.length; i++) {
+//         var studentRow = $("<tr>");
+//         for (var j = 0; j < keys.length; j++) {
+//             var td = $("<td>");
+//             var studentInfo = student_array[i][keys[j]];
+//             td.append(studentInfo);
+//             studentRow.append(td);
+//         }
+//         $(".studentListTable").append(studentRow);
+//     }
+// }
 function addStudentToDom(student_array) {
-    var keys = ["name", "course", "grade"];
-    for (var i = 0; i < student_array.length; i++) {
+    var keys = ["name", "course","grade"];
+    for (var i = student_array.length-1; i >= student_array.length-1; i--) {
         var studentRow = $("<tr>");
         for (var j = 0; j < keys.length; j++) {
             var td = $("<td>");
@@ -124,4 +137,6 @@ function reset() {
 // document.addEventListener(load, reset);
 
 /**
- * removeStudent
+ * removeStudent function that removes the object in the student_array
+ * @param studentObj
+ */
