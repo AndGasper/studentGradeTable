@@ -122,3 +122,6 @@ function reset() {
  * Listen for the document to load and reset the data to the initial state
  *  */
 // document.addEventListener(load, reset);
+
+/**
+ * removeStudent
