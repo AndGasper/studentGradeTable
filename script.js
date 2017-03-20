@@ -165,7 +165,7 @@ function removeStudentFromList() {
 
 function getDataFromServer() {
     var dataObject = {
-        api_key: "S5S9V7Xmy7"
+        api_key:
     };
     console.log("test");
     $.ajax({
