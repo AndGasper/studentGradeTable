@@ -63,10 +63,11 @@ function clearAddStudentForm(studentName, courseName, studentGrade) {
  */
 function calculateAverage(student_array) {
     var total = 0;
-    for (var i = 0; i <= student_array.length -1; i++) {
-        total += student_array[i]["grade"];
+    for (var i = 0; i <= student_array[0].length -1; i++) {
+        total += student_array[0][i]["grade"];
     }
-    var average = Math.floor(total/student_array.length);
+    var average = Math.floor(total/student_array[0].length);
+    $(".avgGrade").text(average);
     return average;
 }
 /**
@@ -93,22 +94,9 @@ function updateStudentList(student_array) {
  * into the .student_list tbody
  * @param studentObj
  */
-// function addStudentToDom(student_array) {
-//     var keys = ["name", "course", "grade"];
-//     for (var i = 0; i < student_array.length; i++) {
-//         var studentRow = $("<tr>");
-//         for (var j = 0; j < keys.length; j++) {
-//             var td = $("<td>");
-//             var studentInfo = student_array[i][keys[j]];
-//             td.append(studentInfo);
-//             studentRow.append(td);
-//         }
-//         $(".studentListTable").append(studentRow);
-//     }
-// }
 function addStudentToDom(student_array) {
-    var keys = ["name", "course","grade"];
-    for (var i = student_array.length-1; i >= student_array.length-1; i--) {
+    var keys = ["name", "course", "grade"];
+    for (var i = 0; i < student_array.length; i++) {
         var studentRow = $("<tr>");
         for (var j = 0; j < keys.length; j++) {
             var td = $("<td>");
@@ -123,6 +111,23 @@ function addStudentToDom(student_array) {
         studentRow.append(deleteButton); // The formatting could use a little work
     }
 }
+// function addStudentToDom(student_array) {
+//     var keys = ["name", "course","grade"];
+//     for (var i = student_array.length-1; i >= student_array.length-1; i--) {
+//         var studentRow = $("<tr>");
+//         for (var j = 0; j < keys.length; j++) {
+//             var td = $("<td>");
+//             var studentInfo = student_array[i][keys[j]];
+//             td.append(studentInfo);
+//             studentRow.append(td);
+//         }
+//         $(".studentListTable").append(studentRow);
+//         var deleteButton = $("<button>").addClass("btn btn-danger").text("Delete");
+//         deleteButton.on("click",removeStudentFromList);
+//         deleteButton.on("click", removeStudentFromDom);
+//         studentRow.append(deleteButton); // The formatting could use a little work
+//     }
+// }
 
 /**
  * reset - resets the application to initial state. Global variables reset, DOM get reset to initial load state
@@ -175,7 +180,10 @@ function getDataFromServer() {
         url: "http://s-apis.learningfuze.com/sgt/get",
         success: function (response) {
             console.log("Test!");
-            console.log(response);
+            //updateData(response["data"]);
+            addStudentToDom(response["data"]);
+            student_array.push(response["data"]);
+            updateData(student_array);
         }
     });
 }
