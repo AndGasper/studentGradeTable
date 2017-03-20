@@ -162,3 +162,20 @@ function removeStudentFromList() {
     console.log("removeStudentFromList function");
     console.log("Who is this", this);
 }
+
+function getDataFromServer() {
+    var dataObject = {
+        api_key: "S5S9V7Xmy7"
+    };
+    console.log("test");
+    $.ajax({
+        data: dataObject,
+        dataType: "json",
+        method: "POST",
+        url: "http://s-apis.learningfuze.com/sgt/get",
+        success: function (response) {
+            console.log("Test!");
+            console.log(response);
+        }
+    });
+}
