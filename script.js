@@ -46,7 +46,7 @@ function addStudent() {
     student_array.push(student);
     updateData(student_array);
     addStudentToDom(student_array);
-    cancelClicked(student_array);
+    clearAddStudentForm(student);
 
 }
 /**
@@ -56,7 +56,7 @@ function clearAddStudentForm(studentName, courseName, studentGrade) {
     $(studentName).val("");
     $(courseName).val("");
     $(studentGrade).val("");
-};
+}
 /**
  * calculateAverage - loop through the global student array and calculate average grade and return that value
  * @returns {number}
@@ -111,7 +111,10 @@ function addStudentToDom(student_array) {
  * reset - resets the application to initial state. Global variables reset, DOM get reset to initial load state
  */
 function reset() {
-    var student_array = [];
+    student_array = [];
+    studentName = $("#studentName").val("");
+    courseName = $("#course").val("");
+    studentGrade = $("#studentGrade").val("");
 }
 
 
