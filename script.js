@@ -63,10 +63,10 @@ function clearAddStudentForm(studentName, courseName, studentGrade) {
  */
 function calculateAverage(student_array) {
     var total = 0;
-    for (var i = 0; i <= student_array[0].length -1; i++) {
-        total += student_array[0][i]["grade"];
+    for (var i = 0; i <= student_array.length -1; i++) {
+        total += student_array[i]["grade"];
     }
-    var average = Math.floor(total/student_array[0].length);
+    var average = Math.floor(total/student_array.length);
     $(".avgGrade").text(average);
     return average;
 }
@@ -156,7 +156,7 @@ function removeStudentFromDom() {
     // console.log("Who is my parent row?");
     //console.log($(this).parent()[0]); // $(this).parent()[0] removes that entire row. The [0] index is the table row
     // console.log("Am I the index?", $(this).parent().index()); // Index of the row in the table for removing from student array
-    student_array[0].splice($(this).parent().index(),1); // Removes the student object entry from the student array
+    student_array.splice($(this).parent().index(),1); // Removes the student object entry from the student array
     $(this).parent()[0].remove();
     // console.log(student_array);
 
@@ -181,8 +181,10 @@ function getDataFromServer() {
         success: function (response) {
             console.log("Test!");
             //updateData(response["data"]);
-            addStudentToDom(response["data"]);
-            student_array.push(response["data"]);
+            addStudentToDom(response["data"]); // response["data"] gets the array with all the people in it
+            for (var i = 0; i < response["data"].length; i++) {
+                student_array.push(response["data"][i]);
+            }
             updateData(student_array);
         }
     });
