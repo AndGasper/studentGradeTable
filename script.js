@@ -156,7 +156,7 @@ function removeStudentFromDom() {
     // console.log("Who is my parent row?");
     //console.log($(this).parent()[0]); // $(this).parent()[0] removes that entire row. The [0] index is the table row
     // console.log("Am I the index?", $(this).parent().index()); // Index of the row in the table for removing from student array
-    student_array.splice($(this).parent().index(),1); // Removes the student object entry from the student array
+    student_array[0].splice($(this).parent().index(),1); // Removes the student object entry from the student array
     $(this).parent()[0].remove();
     // console.log(student_array);
 
