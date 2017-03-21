@@ -144,6 +144,7 @@ function removeStudentFromDom() {
     $(this).parent()[0].remove();
     // console.log(student_array);
     updateData(student_array);
+    deleteDataFromServer();
 }
 
 function removeStudentFromList() {
@@ -181,7 +182,7 @@ function writeDataToServer() {
         "course": student_array[student_array.length-1]["course"],
         "grade": student_array[student_array.length-1]["grade"]
     };
-    console.log("Jean Val Jean?", $(this));
+    console.log("Jean Val Jean?", $(this)); // The way it is written $(this) = Window
     $.ajax({
         data: dataObject,
         dataType: "json",
@@ -191,6 +192,22 @@ function writeDataToServer() {
             console.log("writeDataToServer test!");
             console.log("I was the response", response);
             console.log("new_id", response["new_id"]);
+        }
+    });
+}
+
+function deleteDataFromServer() {
+    var dataObject = {
+        api_key: "S5S9V7Xmy7"
+    };
+    $.ajax({
+        data: dataObject,
+        dataType: "json",
+        method: "POST",
+        url: "http://s-apis.learningfuze/sgt/delete",
+        success: function(response) {
+            console.log("deleteDataFromServer function");
+            console.log("response",response);
         }
     });
 }
