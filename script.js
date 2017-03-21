@@ -74,7 +74,6 @@ function calculateAverage(student_array) {
  * updateData - centralized function to update the average and call student list update
  */
 function updateData(student_array) {
-    //updateStudentList(student_array);
     calculateAverage(student_array);
     addStudentToDom(student_array);
 }
@@ -82,14 +81,7 @@ function updateData(student_array) {
 /**
  * updateStudentList - loops through global student array and appends each objects data into the student-list-container > list-body
  */
-// function updateStudentList(student_array) {
-//     var studentKeys = ["name","course", "grade"];
-//     for (var i = 0; i < student_array.length; i++) {
-//         for (var j = 0; j < studentKeys.length; j++) {
-//             $(student_array[i][studentKeys[j]]).appendTo("student-list-container > list-body");
-//         }
-//     }
-// }
+
 /**
  * addStudentToDom - take in a student object, create html elements from the values and then append the elements
  * into the .student_list tbody
@@ -108,8 +100,7 @@ function addStudentToDom(student_array) {
         }
         $(".studentListTable").append(studentRow);
         var deleteButton = $("<button>").addClass("btn btn-danger").text("Delete");
-        deleteButton.on("click",removeStudentFromList);
-        deleteButton.on("click", removeStudentFromDom);
+        deleteButton.on("click", removeStudent);
         studentRow.append(deleteButton); // The formatting could use a little work
     }
 }
@@ -134,12 +125,8 @@ function reset() {
  * @param studentObj
  */
 
-function removeStudentFromDom() {
+function removeStudent() {
 
-    // console.log("Who is this?", this); // this = <button>
-    // console.log("Who is my parent row?");
-    //console.log($(this).parent()[0]); // $(this).parent()[0] removes that entire row. The [0] index is the table row
-    // console.log("Am I the index?", $(this).parent().index()); // Index of the row in the table for removing from student array
     var indexInStudentArray = $(this).parent().index();
     console.log("Index in student_array:", indexInStudentArray);
     console.log("student_id:", student_array[indexInStudentArray]["id"]);
@@ -148,14 +135,8 @@ function removeStudentFromDom() {
 
     student_array.splice($(this).parent().index(),1); // Removes the student object entry from the student array
     $(this).parent()[0].remove(); // Removes the student row from the table
-    // console.log(student_array);
     updateData(student_array);
     deleteDataFromServer(studentID);
-}
-
-function removeStudentFromList() {
-    console.log("removeStudentFromList function");
-    console.log("Who is this", this);
 }
 
 function getDataFromServer() {
