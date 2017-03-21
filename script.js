@@ -46,6 +46,7 @@ function addStudent() {
     student_array.push(student);
     clearAddStudentForm($("#studentName"),$("#course"),$("#studentGrade"));
     updateData(student_array);
+    writeDataToServer(student);
 
 }
 /**
@@ -112,43 +113,6 @@ function addStudentToDom(student_array) {
         studentRow.append(deleteButton); // The formatting could use a little work
     }
 }
-// This version of addStudentToDom successfully added data from server but messed up local add student functionality.
-// function addStudentToDom(student_array) {
-//     var keys = ["name", "course", "grade"];
-//     for (var i = 0; i < student_array.length; i++) {
-//         var studentRow = $("<tr>");
-//         for (var j = 0; j < keys.length; j++) {
-//             var td = $("<td>");
-//             var studentInfo = student_array[i][keys[j]];
-//             td.append(studentInfo);
-//             studentRow.append(td);
-//         }
-//         $(".studentListTable").append(studentRow);
-//         var deleteButton = $("<button>").addClass("btn btn-danger").text("Delete");
-//         deleteButton.on("click",removeStudentFromList);
-//         deleteButton.on("click", removeStudentFromDom);
-//         studentRow.append(deleteButton); // The formatting could use a little work
-//     }
-// }
-// The versopm of addStudentToDom(student_array) added one at a time but did not work with getDataFromServer()
-// function addStudentToDom(student_array) {
-//     var keys = ["name", "course","grade"];
-//     for (var i = student_array.length-1; i >= student_array.length-1; i--) {
-//         var studentRow = $("<tr>");
-//         for (var j = 0; j < keys.length; j++) {
-//             var td = $("<td>");
-//             var studentInfo = student_array[i][keys[j]];
-//             td.append(studentInfo);
-//             studentRow.append(td);
-//         }
-//         $(".studentListTable").append(studentRow);
-//         var deleteButton = $("<button>").addClass("btn btn-danger").text("Delete");
-//         deleteButton.on("click",removeStudentFromList);
-//         deleteButton.on("click", removeStudentFromDom);
-//         studentRow.append(deleteButton); // The formatting could use a little work
-//     }
-// }
-
 /**
  * reset - resets the application to initial state. Global variables reset, DOM get reset to initial load state
  */
@@ -192,11 +156,12 @@ function getDataFromServer() {
         api_key: "S5S9V7Xmy7"
     };
     console.log("test");
+    // ajax call with data, dataType, method, url, and success function
     $.ajax({
         data: dataObject,
         dataType: "json",
         method: "POST",
-        url: "http://s-apis.learningfuze.com/sgt/get",
+        url: "http://s-apis.learningfuze.com/sgt/get", // /get is the one for reading data from the server
         success: function (response) {
             console.log("Test!");
             //updateData(response["data"]);
@@ -205,6 +170,27 @@ function getDataFromServer() {
                 student_array.push(response["data"][i]);
             }
             updateData(student_array);
+        }
+    });
+}
+
+function writeDataToServer() {
+    var dataObject = {
+        api_key: "S5S9V7Xmy7",
+        "name": student_array[student_array.length-1]["name"],
+        "course": student_array[student_array.length-1]["course"],
+        "grade": student_array[student_array.length-1]["grade"]
+    };
+    console.log("Jean Val Jean?", $(this));
+    $.ajax({
+        data: dataObject,
+        dataType: "json",
+        method: "POST",
+        url: "http://s-apis.learningfuze.com/sgt/create",
+        success: function(response) {
+            console.log("writeDataToServer test!");
+            console.log("I was the response", response);
+            console.log("new_id", response["new_id"]);
         }
     });
 }
