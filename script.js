@@ -44,9 +44,8 @@ function addStudent() {
         "grade": $("#studentGrade").val()
     };
     student_array.push(student);
-    updateData(student_array);
-    // addStudentToDom(student_array);
     clearAddStudentForm($("#studentName"),$("#course"),$("#studentGrade"));
+    updateData(student_array);
 
 }
 /**
@@ -64,7 +63,7 @@ function clearAddStudentForm(studentName, courseName, studentGrade) {
 function calculateAverage(student_array) {
     var total = 0;
     for (var i = 0; i <= student_array.length -1; i++) {
-        total += student_array[i]["grade"];
+        total += parseFloat(student_array[i]["grade"]);
     }
     var average = Math.floor(total/student_array.length);
     $(".avgGrade").text(average);
