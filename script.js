@@ -45,7 +45,7 @@ function addStudent() {
     };
     student_array.push(student);
     updateData(student_array);
-    addStudentToDom(student_array);
+    // addStudentToDom(student_array);
     clearAddStudentForm($("#studentName"),$("#course"),$("#studentGrade"));
 
 }
@@ -74,28 +74,30 @@ function calculateAverage(student_array) {
  * updateData - centralized function to update the average and call student list update
  */
 function updateData(student_array) {
-    updateStudentList(student_array);
+    //updateStudentList(student_array);
     calculateAverage(student_array);
+    addStudentToDom(student_array);
 }
 
 /**
  * updateStudentList - loops through global student array and appends each objects data into the student-list-container > list-body
  */
-function updateStudentList(student_array) {
-    var studentKeys = ["name","course", "grade"];
-    for (var i = 0; i < student_array.length; i++) {
-        for (var j = 0; j < studentKeys.length; j++) {
-            $(student_array[i][studentKeys[j]]).appendTo("student-list-container > list-body");
-        }
-    }
-}
+// function updateStudentList(student_array) {
+//     var studentKeys = ["name","course", "grade"];
+//     for (var i = 0; i < student_array.length; i++) {
+//         for (var j = 0; j < studentKeys.length; j++) {
+//             $(student_array[i][studentKeys[j]]).appendTo("student-list-container > list-body");
+//         }
+//     }
+// }
 /**
  * addStudentToDom - take in a student object, create html elements from the values and then append the elements
  * into the .student_list tbody
  * @param studentObj
  */
 function addStudentToDom(student_array) {
-    var keys = ["name", "course", "grade"];
+    $(".studentListTable").empty();
+    var keys = ["name", "course","grade"];
     for (var i = 0; i < student_array.length; i++) {
         var studentRow = $("<tr>");
         for (var j = 0; j < keys.length; j++) {
@@ -111,6 +113,25 @@ function addStudentToDom(student_array) {
         studentRow.append(deleteButton); // The formatting could use a little work
     }
 }
+// This version of addStudentToDom successfully added data from server but messed up local add student functionality.
+// function addStudentToDom(student_array) {
+//     var keys = ["name", "course", "grade"];
+//     for (var i = 0; i < student_array.length; i++) {
+//         var studentRow = $("<tr>");
+//         for (var j = 0; j < keys.length; j++) {
+//             var td = $("<td>");
+//             var studentInfo = student_array[i][keys[j]];
+//             td.append(studentInfo);
+//             studentRow.append(td);
+//         }
+//         $(".studentListTable").append(studentRow);
+//         var deleteButton = $("<button>").addClass("btn btn-danger").text("Delete");
+//         deleteButton.on("click",removeStudentFromList);
+//         deleteButton.on("click", removeStudentFromDom);
+//         studentRow.append(deleteButton); // The formatting could use a little work
+//     }
+// }
+// The versopm of addStudentToDom(student_array) added one at a time but did not work with getDataFromServer()
 // function addStudentToDom(student_array) {
 //     var keys = ["name", "course","grade"];
 //     for (var i = student_array.length-1; i >= student_array.length-1; i--) {
