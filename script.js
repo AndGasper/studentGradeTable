@@ -140,11 +140,17 @@ function removeStudentFromDom() {
     // console.log("Who is my parent row?");
     //console.log($(this).parent()[0]); // $(this).parent()[0] removes that entire row. The [0] index is the table row
     // console.log("Am I the index?", $(this).parent().index()); // Index of the row in the table for removing from student array
+    var indexInStudentArray = $(this).parent().index();
+    console.log("Index in student_array:", indexInStudentArray);
+    console.log("student_id:", student_array[indexInStudentArray]["id"]);
+    console.log(student_array[indexInStudentArray]["name"]);
+    var studentID = student_array[indexInStudentArray]["id"];
+
     student_array.splice($(this).parent().index(),1); // Removes the student object entry from the student array
-    $(this).parent()[0].remove();
+    $(this).parent()[0].remove(); // Removes the student row from the table
     // console.log(student_array);
     updateData(student_array);
-    deleteDataFromServer();
+    deleteDataFromServer(studentID);
 }
 
 function removeStudentFromList() {
@@ -196,20 +202,26 @@ function writeDataToServer() {
     });
 }
 
-function deleteDataFromServer() {
+function deleteDataFromServer(studentID) {
+    console.log(studentID);
     var dataObject = {
-        api_key: "S5S9V7Xmy7"
+        api_key: "S5S9V7Xmy7",
+        "student_id": studentID
     };
     $.ajax({
         data: dataObject,
         dataType: "json",
         method: "POST",
-        url: "http://s-apis.learningfuze/sgt/delete",
+        url: "http://s-apis.learningfuze.com/sgt/delete",
         success: function(response) {
             console.log("deleteDataFromServer function");
             console.log("response",response);
+        },
+
+        error: function(response) {
+            console.log("ERROR!");
+            console.log(response);
         }
     });
 }
 
-// Bob LobLaw: Attorney at Law
