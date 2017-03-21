@@ -180,8 +180,7 @@ function removeStudentFromDom() {
     student_array.splice($(this).parent().index(),1); // Removes the student object entry from the student array
     $(this).parent()[0].remove();
     // console.log(student_array);
-
-
+    updateData(student_array);
 }
 
 function removeStudentFromList() {
