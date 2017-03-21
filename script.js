@@ -126,17 +126,15 @@ function reset() {
  */
 
 function removeStudent() {
-
+    // console.log("Index in student_array:", indexInStudentArray);
+    // console.log("student_id:", student_array[indexInStudentArray]["id"]);
+    // console.log(student_array[indexInStudentArray]["name"]);
     var indexInStudentArray = $(this).parent().index();
-    console.log("Index in student_array:", indexInStudentArray);
-    console.log("student_id:", student_array[indexInStudentArray]["id"]);
-    console.log(student_array[indexInStudentArray]["name"]);
     var studentID = student_array[indexInStudentArray]["id"];
-
     student_array.splice($(this).parent().index(),1); // Removes the student object entry from the student array
     $(this).parent()[0].remove(); // Removes the student row from the table
-    updateData(student_array);
-    deleteDataFromServer(studentID);
+    updateData(student_array); // update the data
+    deleteDataFromServer(studentID); // delete the student from the server based on the student's id; student_id: (id value) => formatting
 }
 
 function getDataFromServer() {
