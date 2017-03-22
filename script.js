@@ -160,7 +160,7 @@ function getDataFromServer() {
     });
 }
 
-function writeDataToServer() {
+function writeDataToServer(student) {
     var dataObject = {
         api_key: "S5S9V7Xmy7",
         "name": student_array[student_array.length-1]["name"],
@@ -177,6 +177,7 @@ function writeDataToServer() {
             console.log("writeDataToServer test!");
             console.log("I was the response", response);
             console.log("new_id", response["new_id"]);
+            student.id = response["new_id"];
         }
     });
 }
