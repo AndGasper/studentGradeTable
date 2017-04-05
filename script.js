@@ -161,7 +161,7 @@ function getDataFromServer() {
 }
 
 function writeDataToServer(student) {
-    let dataObject = {
+    var dataObject = {
         api_key: "S5S9V7Xmy7",
         "name": student_array[student_array.length-1]["name"],
         "course": student_array[student_array.length-1]["course"],
