@@ -40,7 +40,7 @@ function cancelClicked() {
 function addStudent() {
     var student = {
         "name": $("#studentName").val(),
-        "course": $("#course").val(),
+        "course_name": $("#course").val(),
         "grade": $("#studentGrade").val()
     };
     student_array.push(student);
@@ -89,7 +89,7 @@ function updateData(student_array) {
  */
 function addStudentToDom(student_array) {
     $(".studentListTable").empty();
-    var keys = ["name", "course","grade"];
+    var keys = ["name", "course_name","grade"];
     for (var i = 0; i < student_array.length; i++) {
         var studentRow = $("<tr>");
         for (var j = 0; j < keys.length; j++) {
@@ -138,41 +138,46 @@ function removeStudent() {
 }
 
 function getDataFromServer() {
-    var dataObject = {
-        api_key: "S5S9V7Xmy7"
-    };
-    console.log("test");
+    var dataObject = {};
+
     // ajax call with data, dataType, method, url, and success function
     $.ajax({
-        data: dataObject,
+        //data: dataObject,
+        url: "../prototypes_C2.17/php_SGTserver/data.php?action=readAll",
         dataType: "json",
         method: "POST",
-        url: "http://s-apis.learningfuze.com/sgt/get", // /get is the one for reading data from the server
+        // url: "http://s-apis.learningfuze.com/sgt/get", // /get is the one for reading data from the server
+
         success: function (response) {
             console.log("Test!");
+            console.log("success",response);
             //updateData(response["data"]);
             addStudentToDom(response["data"]); // response["data"] gets the array with all the people in it
             for (var i = 0; i < response["data"].length; i++) {
                 student_array.push(response["data"][i]);
             }
             updateData(student_array);
-        }
+        },
+        // error: (response) => {
+        //     console.log("error");
+        //     console.log(response);
+        //     console.log(url);
+        // }
     });
 }
 
 function writeDataToServer(student) {
     var dataObject = {
-        api_key: "S5S9V7Xmy7",
         "name": student_array[student_array.length-1]["name"],
-        "course": student_array[student_array.length-1]["course"],
+        "course_name": student_array[student_array.length-1]["course_name"],
         "grade": student_array[student_array.length-1]["grade"]
     };
-    console.log("Jean Val Jean?", $(this)); // The way it is written $(this) = Window
+
     $.ajax({
         data: dataObject,
         dataType: "json",
         method: "POST",
-        url: "http://s-apis.learningfuze.com/sgt/create",
+        url: "../prototypes_C2.17/php_SGTserver/data.php?action=insert",
         success: function(response) {
             console.log("writeDataToServer test!");
             console.log("I was the response", response);
@@ -185,14 +190,13 @@ function writeDataToServer(student) {
 function deleteDataFromServer(studentID) {
     console.log(studentID);
     var dataObject = {
-        api_key: "S5S9V7Xmy7",
-        "student_id": studentID
+        "id": studentID
     };
     $.ajax({
         data: dataObject,
         dataType: "json",
         method: "POST",
-        url: "http://s-apis.learningfuze.com/sgt/delete",
+        url: "../prototypes_C2.17/php_SGTserver/data.php?action=delete",
         success: function(response) {
             console.log("deleteDataFromServer function");
             console.log("response",response);
