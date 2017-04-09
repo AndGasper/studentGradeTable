@@ -9,15 +9,15 @@
  * student_array - global array to hold student objects
  * @type {Array}
  */
-var student_array = [];
+let student_array = [];
 
 /**
  * inputIds - id's of the elements that are used to add students
  * @type {string[]}
  */
-var studentName = $("#studentName").val();
-var courseName = $("#course").val();
-var studentGrade = $("#studentGrade").val();
+let studentName = $("#studentName").val();
+let courseName = $("#course").val();
+let studentGrade = $("#studentGrade").val();
 
 /**
  * addClicked = Event Handler when user clicks the add button, should a
@@ -38,7 +38,7 @@ function cancelClicked() {
  * @return undefined
  */
 function addStudent() {
-    var student = {
+    let student = {
         "name": $("#studentName").val(),
         "course_name": $("#course").val(),
         "grade": $("#studentGrade").val()
@@ -62,11 +62,11 @@ function clearAddStudentForm(studentName, courseName, studentGrade) {
  * @returns {number}
  */
 function calculateAverage(student_array) {
-    var total = 0;
-    for (var i = 0; i <= student_array.length -1; i++) {
+    let total = 0;
+    for (let i = 0; i <= student_array.length -1; i++) {
         total += parseFloat(student_array[i]["grade"]);
     }
-    var average = Math.floor(total/student_array.length);
+    let average = Math.floor(total/student_array.length);
     $(".avgGrade").text(average);
     return average;
 }
@@ -118,22 +118,12 @@ function reset() {
     courseName = $("#course").val("");
     studentGrade = $("#studentGrade").val("");
 }
-
-
-/**
- * Listen for the document to load and reset the data to the initial state
- *  */
-// document.addEventListener(load, reset);
-
 /**
  * removeStudent function that removes the object in the student_array
  * @param studentObj
  */
 
 function removeStudent() {
-    // console.log("Index in student_array:", indexInStudentArray);
-    // console.log("student_id:", student_array[indexInStudentArray]["id"]);
-    // console.log(student_array[indexInStudentArray]["name"]);
     let indexInStudentArray = $(this).parent().index();
     let studentID = student_array[indexInStudentArray]["id"];
     student_array.splice($(this).parent().index(),1); // Removes the student object entry from the student array
@@ -142,8 +132,11 @@ function removeStudent() {
     deleteDataFromServer(studentID); // delete the student from the server based on the student's id; student_id: (id value) => formatting
 }
 function editStudentModal() {
+
+    let studentInfo = student_array[$(this).parent().index()];
+    console.log(studentInfo);
+
     let modalFade = $("<div class='modal fade' id='editStudentModal' tabindex='-1' role='dialog' aria-labelledby='editStudentModalLabel' aria-hidden='true'>");
-    console.log("modalFade", modalFade);
     let modalDialog = $("<div class='modal-dialog' role='document'>");
     let modalContent = $("<div>").addClass("modal-content");
     let modalHeader = $("<div>").addClass("modal-header").text("Modal Header");
@@ -154,20 +147,27 @@ function editStudentModal() {
 
     modalHeader.append(modalTitle);
     modalHeader.append(closeModalButton);
-    console.log("modal header", modalHeader);
-
     modalContent.append(modalHeader);
 
     let modalBody = $("<div>").addClass("modal-body");
-    let modalBodyContent = $("<div>").text("Bleep bloop");
-    modalBody.append(modalBodyContent);
+    let modalBodyContentStudent= $("<div class='form-group'>");
+    let modalBodyContentStudentNameLabel = $("<label for='Student Name' class='form-control-label'>")
+    let modalBodyContentStudentName = $("<input type='text' class='form-control'>").text(studentInfo.name);
+    modalBodyContentStudent.append(modalBodyContentStudentNameLabel);
+    modalBodyContentStudent.append(modalBodyContentStudentName);
+
+    let modalBodyContentCourseName = $("<div class='form-group'>").text(studentInfo.course_name);
+    let modalBodyContentGrade = $("<div class='form-group'>").text(studentInfo.grade);
+
+    modalBody.append(modalBodyContentStudent);
+    modalBody.append(modalBodyContentCourseName);
+    modalBody.append(modalBodyContentGrade);
     modalContent.append(modalBody);
-    console.log("modal content", modalContent);
 
     let modalFooter = $("<div>").addClass("modal-footer");
     let cancelEditButton = $("<button class='btn btn-secondary' data-dismiss='modal'>");
     cancelEditButton.text("Cancel");
-    let confirmEditButton = $("<button class='btn btn-primary' data-dismiss='modal'>");
+    let confirmEditButton = $("<button class='btn btn-primary' onclick='editStudent()'' data-dismiss='modal'>");
     confirmEditButton.text("Confirm Edit");
     modalFooter.append(cancelEditButton);
     modalFooter.append(confirmEditButton);
@@ -175,7 +175,7 @@ function editStudentModal() {
 
     modalDialog.append(modalContent);
     modalFade.append(modalDialog);
-    console.log("modalDialog", modalDialog);
+
     $(modalFade).modal("show");
 }
 /**
@@ -183,6 +183,7 @@ function editStudentModal() {
 * @param none
  */
 function editStudent() {
+    console.log("editStudent triggered");
     //let editedStudentRow = $(this).parent().tr.cells;
     //let indexInStudentArray = $(this).parent().index();
     //let editedStudent = student_array[indexInStudentArray];
