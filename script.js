@@ -209,3 +209,8 @@ function deleteDataFromServer(studentID) {
     });
 }
 
+function editDataOnServer(studentID) {
+    console.log(studentID);
+
+}
+
