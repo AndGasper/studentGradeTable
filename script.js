@@ -151,10 +151,21 @@ function editStudentModal() {
 
     let modalBody = $("<div>").addClass("modal-body");
     let modalBodyContentStudent= $("<div class='form-group'>");
-    let modalBodyContentStudentNameLabel = $("<label for='Student Name' class='form-control-label'>")
+    let modalBodyContentStudentNameLabel = $("<label for='Student Name' class='form-control-label'>").text("Student Name");
     let modalBodyContentStudentName = $("<input type='text' class='form-control'>").text(studentInfo.name);
+    modalBodyContentStudentName.val(studentInfo.name);
     modalBodyContentStudent.append(modalBodyContentStudentNameLabel);
     modalBodyContentStudent.append(modalBodyContentStudentName);
+
+    let modalBodyContentCourse= $("<div class='form-group'>");
+    let modalBodyContentCourseNameLabel = $("<label for='Course name' class='form-control-label'>").text("Course Name");
+    let modalBodyContentCourseName = $("<input type='text' class'form-control'>").text(studentInfo.course_name);
+    modalBodyContentCourseName.val(studentInfo.course_name);
+
+    modalBodyContentCourse.append(modalBodyContentCourseNameLabel);
+    modalBodyContentCourse.append(modalBodyContentCourse);
+
+
 
     let modalBodyContentCourseName = $("<div class='form-group'>").text(studentInfo.course_name);
     let modalBodyContentGrade = $("<div class='form-group'>").text(studentInfo.grade);
@@ -167,7 +178,7 @@ function editStudentModal() {
     let modalFooter = $("<div>").addClass("modal-footer");
     let cancelEditButton = $("<button class='btn btn-secondary' data-dismiss='modal'>");
     cancelEditButton.text("Cancel");
-    let confirmEditButton = $("<button class='btn btn-primary' onclick='editStudent()'' data-dismiss='modal'>");
+    let confirmEditButton = $("<button class='btn btn-primary' onclick='editStudent()' data-dismiss='modal'>");
     confirmEditButton.text("Confirm Edit");
     modalFooter.append(cancelEditButton);
     modalFooter.append(confirmEditButton);
