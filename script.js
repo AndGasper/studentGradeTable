@@ -1,11 +1,4 @@
 /**
- * Define all global variables here
-//  */
-// var studentName = null;
-// var courseName = null;
-// var studentGrade = null;
-
-/**
  * student_array - global array to hold student objects
  * @type {Array}
  */
@@ -134,12 +127,12 @@ function removeStudent() {
 function editStudentModal() {
 
     let studentInfo = student_array[$(this).parent().index()];
-    console.log(studentInfo);
 
+    // Modal frame
     let modalFade = $("<div class='modal fade' id='editStudentModal' tabindex='-1' role='dialog' aria-labelledby='editStudentModalLabel' aria-hidden='true'>");
     let modalDialog = $("<div class='modal-dialog' role='document'>");
     let modalContent = $("<div>").addClass("modal-content");
-    let modalHeader = $("<div>").addClass("modal-header").text("Modal Header");
+    let modalHeader = $("<div>").addClass("modal-header");// .text("Modal Header");
     let modalTitle = $("<div>").addClass("modal-title").text("Edit Student");
     let closeModalButton = $("<button type='button' class='close' data-dismiss='modal' aria-label='Close'>");
     let closeModalButtonSymbol = $("<span aria-hidden='true'>").text("&times;");
@@ -150,6 +143,8 @@ function editStudentModal() {
     modalContent.append(modalHeader);
 
     let modalBody = $("<div>").addClass("modal-body");
+
+    // Student name input field
     let modalBodyContentStudent= $("<div class='form-group'>");
     let modalBodyContentStudentNameLabel = $("<label for='Student Name' class='form-control-label'>").text("Student Name");
     let modalBodyContentStudentName = $("<input type='text' class='form-control'>").text(studentInfo.name);
@@ -157,18 +152,21 @@ function editStudentModal() {
     modalBodyContentStudent.append(modalBodyContentStudentNameLabel);
     modalBodyContentStudent.append(modalBodyContentStudentName);
 
+    // Student Course input field
     let modalBodyContentCourse= $("<div class='form-group'>");
     let modalBodyContentCourseNameLabel = $("<label for='Course name' class='form-control-label'>").text("Course Name");
-    let modalBodyContentCourseName = $("<input type='text' class'form-control'>").text(studentInfo.course_name);
+    let modalBodyContentCourseName = $("<input type='text' class='form-control'>");
     modalBodyContentCourseName.val(studentInfo.course_name);
-
     modalBodyContentCourse.append(modalBodyContentCourseNameLabel);
     modalBodyContentCourse.append(modalBodyContentCourse);
 
-
-
-    let modalBodyContentCourseName = $("<div class='form-group'>").text(studentInfo.course_name);
-    let modalBodyContentGrade = $("<div class='form-group'>").text(studentInfo.grade);
+    //Student Course Grade input field
+    let modalBodyContentGrade = $("<div class='form-group'>");
+    let modalBodyContentGradeLabel = $("<label for='Course grade' class='form-control-label'>").text("Course Grade");
+    let modalBodyContentGradeValue = $("<input type='text' class='form-control'>");
+    modalBodyContentGradeValue.val(studentInfo.grade);
+    modalBodyContentGrade.append(modalBodyContentGradeLabel);
+    modalBodyContentGrade.append(modalBodyContentGradeValue);
 
     modalBody.append(modalBodyContentStudent);
     modalBody.append(modalBodyContentCourseName);
@@ -178,7 +176,7 @@ function editStudentModal() {
     let modalFooter = $("<div>").addClass("modal-footer");
     let cancelEditButton = $("<button class='btn btn-secondary' data-dismiss='modal'>");
     cancelEditButton.text("Cancel");
-    let confirmEditButton = $("<button class='btn btn-primary' onclick='editStudent()' data-dismiss='modal'>");
+    let confirmEditButton = $("<button class='btn btn-primary' onclick='editStudent(studentInfo)' data-dismiss='modal'>");
     confirmEditButton.text("Confirm Edit");
     modalFooter.append(cancelEditButton);
     modalFooter.append(confirmEditButton);
@@ -190,14 +188,12 @@ function editStudentModal() {
     $(modalFade).modal("show");
 }
 /**
-* editStudent - Grab the information of the student row; student information is collected as an object with id, name, course, and grade
-* @param none
+* editStudent - Use information from the modal to send info to the server
+* @param studentObj
  */
-function editStudent() {
+function editStudent(studentObj) {
     console.log("editStudent triggered");
-    //let editedStudentRow = $(this).parent().tr.cells;
-    //let indexInStudentArray = $(this).parent().index();
-    //let editedStudent = student_array[indexInStudentArray];
+    console.log(studentObj);
     //console.log(student_array[indexInStudentArray]);
     //$(editedStudentRow).attr("contentEditable=true");
     //updateData(student_array);
@@ -256,7 +252,7 @@ function writeDataToServer(student) {
 
 function deleteDataFromServer(studentID) {
     console.log(studentID);
-    var dataObject = {
+    let dataObject = {
         "id": studentID
     };
     $.ajax({
