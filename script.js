@@ -113,7 +113,6 @@ function reset() {
 }
 /**
  * removeStudent function that removes the object in the student_array
- * @param studentObj
  */
 
 function removeStudent() {
@@ -127,6 +126,9 @@ function removeStudent() {
 function editStudentModal() {
 
     let studentInfo = student_array[$(this).parent().index()];
+
+
+    // Modal form
 
     // Modal frame
     let modalFade = $("<div class='modal fade' id='editStudentModal' tabindex='-1' role='dialog' aria-labelledby='editStudentModalLabel' aria-hidden='true'>");
@@ -142,12 +144,12 @@ function editStudentModal() {
     modalHeader.append(closeModalButton);
     modalContent.append(modalHeader);
 
-    let modalBody = $("<div>").addClass("modal-body");
+    let modalBody = $("<form>").addClass("modal-body");
 
     // Student name input field
     let modalBodyContentStudent= $("<div class='form-group'>");
     let modalBodyContentStudentNameLabel = $("<label for='Student Name' class='form-control-label'>").text("Student Name");
-    let modalBodyContentStudentName = $("<input type='text' class='form-control'>").text(studentInfo.name);
+    let modalBodyContentStudentName = $("<input type='text' id='name' class='form-control'>").text(studentInfo.name);
     modalBodyContentStudentName.val(studentInfo.name);
     modalBodyContentStudent.append(modalBodyContentStudentNameLabel);
     modalBodyContentStudent.append(modalBodyContentStudentName);
@@ -155,7 +157,7 @@ function editStudentModal() {
     // Student Course input field
     let modalBodyContentCourse= $("<div class='form-group'>");
     let modalBodyContentCourseNameLabel = $("<label for='Course name' class='form-control-label'>").text("Course Name");
-    let modalBodyContentCourseName = $("<input type='text' class='form-control'>");
+    let modalBodyContentCourseName = $("<input type='text' id='class' class='form-control'>");
     modalBodyContentCourseName.val(studentInfo.course_name);
     modalBodyContentCourse.append(modalBodyContentCourseNameLabel);
     modalBodyContentCourse.append(modalBodyContentCourse);
@@ -163,7 +165,7 @@ function editStudentModal() {
     //Student Course Grade input field
     let modalBodyContentGrade = $("<div class='form-group'>");
     let modalBodyContentGradeLabel = $("<label for='Course grade' class='form-control-label'>").text("Course Grade");
-    let modalBodyContentGradeValue = $("<input type='text' class='form-control'>");
+    let modalBodyContentGradeValue = $("<input type='text' id='score' class='form-control'>");
     modalBodyContentGradeValue.val(studentInfo.grade);
     modalBodyContentGrade.append(modalBodyContentGradeLabel);
     modalBodyContentGrade.append(modalBodyContentGradeValue);
@@ -176,7 +178,9 @@ function editStudentModal() {
     let modalFooter = $("<div>").addClass("modal-footer");
     let cancelEditButton = $("<button class='btn btn-secondary' data-dismiss='modal'>");
     cancelEditButton.text("Cancel");
-    let confirmEditButton = $("<button class='btn btn-primary' onclick='editStudent(studentInfo)' data-dismiss='modal'>");
+    let confirmEditButton = $("<button  class='btn btn-primary' data-dismiss='modal'>");
+
+    confirmEditButton.on("click", () => {editStudent(studentInfo)}); // Anonymous function to avoid firing as soon as modal loads
     confirmEditButton.text("Confirm Edit");
     modalFooter.append(cancelEditButton);
     modalFooter.append(confirmEditButton);
@@ -192,12 +196,9 @@ function editStudentModal() {
 * @param studentObj
  */
 function editStudent(studentObj) {
-    console.log("editStudent triggered");
-    console.log(studentObj);
-    //console.log(student_array[indexInStudentArray]);
-    //$(editedStudentRow).attr("contentEditable=true");
-    //updateData(student_array);
-    //editDataOnServer(student_array[indexInStudentArray]);
+    // studentObj === studentInfo, contains id of student
+    updateData(student_array);
+    editDataOnServer(studentObj);
 }
 /**
  * getDataFromServer - Get student daa from the server
@@ -206,26 +207,23 @@ function getDataFromServer() {
     // ajax call with data, dataType, method, url, and success function
     $.ajax({
         //data: dataObject,
-        url: "../prototypes_C2.17/php_SGTserver/data.php?action=readAll",
+        url: "data.php?action=readAll",
         dataType: "json",
-        method: "POST",
+        method: "GET",
         // url: "http://s-apis.learningfuze.com/sgt/get", // /get is the one for reading data from the server
 
         success: function (response) {
-            console.log("Test!");
-            console.log("success",response);
-            //updateData(response["data"]);
+
             addStudentToDom(response["data"]); // response["data"] gets the array with all the people in it
             for (let i = 0; i < response["data"].length; i++) {
                 student_array.push(response["data"][i]);
             }
             updateData(student_array);
         },
-        // error: (response) => {
-        //     console.log("error");
-        //     console.log(response);
-        //     console.log(url);
-        // }
+        error: (response) => {
+            console.log("Error");
+            console.log(response);
+        }
     });
 }
 
@@ -240,18 +238,14 @@ function writeDataToServer(student) {
         data: dataObject,
         dataType: "json",
         method: "POST",
-        url: "../prototypes_C2.17/php_SGTserver/data.php?action=insert",
+        url: "data.php?action=insert",
         success: function(response) {
-            console.log("writeDataToServer test!");
-            console.log("I was the response", response);
-            console.log("new_id", response["new_id"]);
             student.id = response["new_id"];
         }
     });
 }
 
 function deleteDataFromServer(studentID) {
-    console.log(studentID);
     let dataObject = {
         "id": studentID
     };
@@ -259,7 +253,7 @@ function deleteDataFromServer(studentID) {
         data: dataObject,
         dataType: "json",
         method: "POST",
-        url: "../prototypes_C2.17/php_SGTserver/data.php?action=delete",
+        url: "data.php?action=delete",
         success: function(response) {
             console.log("deleteDataFromServer function");
             console.log("response",response);
@@ -273,21 +267,28 @@ function deleteDataFromServer(studentID) {
 }
 
 function editDataOnServer(studentObj) {
+    console.log("editDataOnServer(studentObj) studentObj", studentObj);
+    let updatedStudentInfo = {
+        "id": studentObj.id,
+        "name": $('#name').val(),
+        "course_name": $('#class').val(),
+        "grade": $('#score').val()
+    };
+    console.log("updatedStudentInfo", updatedStudentInfo);
     $.ajax({
         data: {
             'id': studentObj.id,
-            'student': studentObj.name,
-            'course': studentObj.course_name,
-            'score': studentObj.grade,
+            'student': updatedStudentInfo.name,
+            'course': updatedStudentInfo.course_name,
+            'score': updatedStudentInfo.grade,
         },
         dataType: "json",
         method: "POST",
-        url: "../prototypes_C2.17/php_SGTserver/data.php?action=update",
+        url: "data.php?action=update",
         success: (response) => {
-            console.log("Success!");
+            console.log("success response", response);
         },
         error: (response) => {
-            console.log("error");
             console.log(response);
         }
     });
