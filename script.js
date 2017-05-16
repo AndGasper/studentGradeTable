@@ -36,9 +36,12 @@ function addStudent() {
         "course_name": $("#course").val(),
         "grade": $("#studentGrade").val()
     };
-    student_array.push(student);
-    clearAddStudentForm($("#studentName"),$("#course"),$("#studentGrade"));
-    writeDataToServer(student);
+    if (student.name !== '' && student.course_name !== '' && student.grade !== '') {
+        student_array.push(student);
+        clearAddStudentForm($("#studentName"),$("#course"),$("#studentGrade"));
+        writeDataToServer(student);
+    }
+
 
 }
 /**
@@ -273,7 +276,6 @@ function getDataFromServer() {
             // If updateData was not used here, how else would data hit the rest of the program?
         },
         error: (response) => {
-            console.log("getDataFromServer error, response", response);
         }
     });
 }
@@ -292,7 +294,6 @@ function writeDataToServer(student) {
             }
         },
         error: function(response) {
-            console.log("Failed to add student to database", response);
         }
     });
 }
@@ -311,25 +312,20 @@ function deleteDataFromServer(studentID) {
         },
 
         error: function(response) {
-            console.log("deleteDataFromServer Error; response");
-            console.log(response);
         }
     });
 }
 
 function editDataOnServer(studentObj) {
-    console.log("editDataOnServer(studentObj) studentObj", studentObj);
     $.ajax({
         data: studentObj,
         dataType: "json",
         method: "POST",
         url: "data.php?action=update",
         success: (response) => {
-            console.log("success response", response);
             getDataFromServer(); // Update the dom following the edit
         },
         error: (response) => {
-            console.log(response);
         }
     });
 }
