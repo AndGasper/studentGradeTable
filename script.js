@@ -37,9 +37,11 @@ function addStudent() {
         "grade": $("#studentGrade").val()
     };
     if (student.name !== '' && student.course_name !== '' && student.grade !== '') {
-        student_array.push(student);
-        clearAddStudentForm($("#studentName"),$("#course"),$("#studentGrade"));
-        writeDataToServer(student);
+        if (student.name.length > 2 && (student.course_name.length > 0 && student.course_name.length <= 20) && (parseInt(student.grade) >= 0 && parseInt(student.grade) <= 100)) {
+            student_array.push(student);
+            clearAddStudentForm($("#studentName"), $("#course"), $("#studentGrade"));
+            writeDataToServer(student);
+        }
     }
 
 
