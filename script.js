@@ -97,11 +97,11 @@ function addStudentToDom(student_array) {
         }
         $(".studentListTable").append(studentRow);
         let operationsRow = $("<td>");
-        let deleteButton = $("<button>").addClass("btn btn-danger").text("Delete");
+        let deleteButton = $("<button>").addClass("btn btn-danger").text("REMOVE");
         let editButton = $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='editStudentModal'>");
         editButton.css("marginRight", "1em");
         editButton.text("Edit");
-        deleteButton.on("click", removeStudent);
+        deleteButton.on("click", removeStudentModal);
         editButton.on("click", editStudentModal);
         operationsRow.append(editButton);
         operationsRow.append(deleteButton); // The formatting could use a little work
@@ -122,20 +122,57 @@ function reset() {
  * removeStudent function that removes the object in the student_array
  */
 
-function removeStudent() {
-    let indexInStudentArray = $(this).parent().parent().index();
-    let studentID = student_array[indexInStudentArray]["id"];
-    student_array.splice($(this).parent().index(),1); // Removes the student object entry from the student array
-    $(this).parent().parent().remove(); // Removes the student row from the table
+function removeStudent(studentInfo) {
+
+    let studentID = student_array[studentInfo]["id"];
     deleteDataFromServer(studentID); // delete the student from the server based on the student's id; student_id: (id value) => formatting
 }
+
+function removeStudentModal() {
+    let indexInStudentArray = $(this).parent().parent().index(); // To know who to delete
+    // Modal frame
+    let modalFade = $("<div class='modal fade' id='editStudentModal' tabindex='-1' role='dialog' aria-labelledby='editStudentModalLabel' aria-hidden='true'>");
+    let modalDialog = $("<div class='modal-dialog' role='document'>");
+    let modalContent = $("<div>").addClass("modal-content");
+    let modalHeader = $("<div>").addClass("modal-header");// .text("Modal Header");
+    let modalTitle = $("<div>").addClass("modal-title").text("Are you sure you want to remove this student?");
+    let closeModalButton = $("<button type='button' class='close' data-dismiss='modal' aria-label='Close'>");
+    let closeModalButtonSymbol = $("<span aria-hidden='true'>").text("x");
+    closeModalButton.append(closeModalButtonSymbol);
+
+    modalHeader.append(modalTitle);
+    modalHeader.append(closeModalButton);
+    modalContent.append(modalHeader);
+
+
+    let modalFooter = $("<div>").addClass("modal-footer");
+    let cancelDeleteButton = $("<button class='btn btn-secondary' data-dismiss='modal'>");
+    cancelDeleteButton.text("Cancel");
+    let confirmDeleteButton= $("<button class='btn btn-danger' data-dismiss='modal'>");
+
+    confirmDeleteButton.on("click", () => {
+        removeStudent(indexInStudentArray);
+    }); // Anonymous function to avoid firing as soon as modal loads
+    confirmDeleteButton.text("REMOVE");
+    modalFooter.append(cancelDeleteButton);
+    modalFooter.append(confirmDeleteButton);
+    modalContent.append(modalFooter);
+
+    modalDialog.append(modalContent);
+    modalFade.append(modalDialog);
+
+    $(modalFade).modal("show");
+    // When the modal hides, call the remove method to remove the modal from the DOM
+    $(modalFade).on('hidden.bs.modal',() => {
+        $(modalFade).remove();
+    });
+}
+
 function editStudentModal() {
 
     let studentInfo = student_array[$(this).parent().parent().index()];
 
-
     // Modal form
-
     // Modal frame
     let modalFade = $("<div class='modal fade' id='editStudentModal' tabindex='-1' role='dialog' aria-labelledby='editStudentModalLabel' aria-hidden='true'>");
     let modalDialog = $("<div class='modal-dialog' role='document'>");
@@ -198,7 +235,7 @@ function editStudentModal() {
     modalFade.append(modalDialog);
 
     $(modalFade).modal("show");
-    // When the modal hides, call the remove method to remove the modal from the DOM which clears the form after use 
+    // When the modal hides, call the remove method to remove the modal from the DOM which clears the form after use
     $(modalFade).on('hidden.bs.modal',() => {
        $(modalFade).remove();
     });
