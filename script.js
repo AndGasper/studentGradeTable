@@ -92,13 +92,16 @@ function addStudentToDom(student_array) {
             studentRow.append(td);
         }
         $(".studentListTable").append(studentRow);
+        let operationsRow = $("<td>");
         let deleteButton = $("<button>").addClass("btn btn-danger").text("Delete");
         let editButton =$("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='editStudentModal'>");
+        editButton.css("marginRight", "1em");
         editButton.text("Edit");
         deleteButton.on("click", removeStudent);
         editButton.on("click", editStudentModal);
-        studentRow.append(editButton);
-        studentRow.append(deleteButton); // The formatting could use a little work
+        operationsRow.append(editButton);
+        operationsRow.append(deleteButton); // The formatting could use a little work
+        studentRow.append(operationsRow);
 
     }
 }
@@ -116,16 +119,18 @@ function reset() {
  */
 
 function removeStudent() {
-    let indexInStudentArray = $(this).parent().index();
+    let indexInStudentArray = $(this).parent().parent().index();
     let studentID = student_array[indexInStudentArray]["id"];
     student_array.splice($(this).parent().index(),1); // Removes the student object entry from the student array
     $(this).parent()[0].remove(); // Removes the student row from the table
+    console.log("$(this)", $(this));
     updateData(student_array); // update the data
+    console.log("removeStudent", studentID);
     deleteDataFromServer(studentID); // delete the student from the server based on the student's id; student_id: (id value) => formatting
 }
 function editStudentModal() {
 
-    let studentInfo = student_array[$(this).parent().index()];
+    let studentInfo = student_array[$(this).parent().parent().index()];
 
 
     // Modal form
@@ -137,7 +142,7 @@ function editStudentModal() {
     let modalHeader = $("<div>").addClass("modal-header");// .text("Modal Header");
     let modalTitle = $("<div>").addClass("modal-title").text("Edit Student");
     let closeModalButton = $("<button type='button' class='close' data-dismiss='modal' aria-label='Close'>");
-    let closeModalButtonSymbol = $("<span aria-hidden='true'>").text("&times;");
+    let closeModalButtonSymbol = $("<span aria-hidden='true'>").text("x");
     closeModalButton.append(closeModalButtonSymbol);
 
     modalHeader.append(modalTitle);
@@ -199,6 +204,8 @@ function editStudent(studentObj) {
     // studentObj === studentInfo, contains id of student
     updateData(student_array);
     editDataOnServer(studentObj);
+
+
 }
 /**
  * getDataFromServer - Get student daa from the server

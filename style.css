@@ -1,0 +1,9 @@
+.student-list {
+    margin-top: 1em;
+    text-align: center;
+}
+
+.student-list > thead > tr > th {
+    text-align: -webkit-center;
+    text-align: center;
+}
