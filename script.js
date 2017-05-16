@@ -96,9 +96,10 @@ function addStudentToDom(student_array) {
             studentRow.append(td);
         }
         $(".studentListTable").append(studentRow);
-        let operationsRow = $("<td>");
-        let deleteButton = $("<button>").addClass("btn btn-danger").text("REMOVE");
-        let editButton = $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='editStudentModal'>");
+        let operationsRow = $("<td class='btn-group-vertical'>");
+        operationsRow.css("border-top", "none");
+        let deleteButton = $("<button>").addClass("btn btn-outline-danger").text("REMOVE");
+        let editButton = $("<button type='button' class='btn btn-outline-primary' data-toggle='modal' data-target='editStudentModal'>");
         editButton.css("marginRight", "1em");
         editButton.text("Edit");
         deleteButton.on("click", removeStudentModal);
