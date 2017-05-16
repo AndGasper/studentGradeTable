@@ -11,13 +11,13 @@ if (empty($course)) $output['errors'][] = 'Please enter course name';
 //write a query that inserts the data into the database.  remember that ID doesn't need to be set as it is auto incrementing
 $query = "INSERT INTO `php_sgt_prototype`.`student_data` (`id`, `name`, `grade`, `course_name`) VALUES (NULL,'$name', '$grade', '$course');";
 //send the query to the database, store the result of the query into $result
-print($query);
+//print($query);
 $result = mysqli_query($conn, $query);
 //check if $result is empty.
 if (empty($result)) {
     //if it is, add 'database error' to errors
     $output['errors'][] = 'Database error';
-    print_r($output['errors']);
+//    print_r($output['errors']);
 }
 //else:
 else {
@@ -35,8 +35,8 @@ else {
         $output['errors'][] = 'insert error';
     }
 }
-print_r($output);
-print_r($output['errors']);
+//print_r($output);
+//print_r($output['errors']);
 
 
 ?>

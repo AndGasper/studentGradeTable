@@ -38,7 +38,6 @@ function addStudent() {
     };
     student_array.push(student);
     clearAddStudentForm($("#studentName"),$("#course"),$("#studentGrade"));
-    updateData(student_array);
     writeDataToServer(student);
 
 }
@@ -65,8 +64,13 @@ function calculateAverage(student_array) {
 }
 /**
  * updateData - centralized function to update the average and call student list update
+ * @params - student_array (an array of objects; [{id: , name: , course: , grade: }])
  */
-function updateData(student_array) {
+function updateData(arrayOfStudentObj) {
+    student_array = []; // Empty out the student array before adding to it again
+    for (let i = 0; i < arrayOfStudentObj.length; i++) {
+    student_array.push(arrayOfStudentObj[i]);
+    }
     calculateAverage(student_array);
     addStudentToDom(student_array);
 }
@@ -78,10 +82,10 @@ function updateData(student_array) {
 /**
  * addStudentToDom - take in a student object, create html elements from the values and then append the elements
  * into the .student_list tbody
- * @param studentObj
+ * @param student_array (an array of objects)
  */
 function addStudentToDom(student_array) {
-    $(".studentListTable").empty();
+    $(".studentListTable").empty(); // Empty out the table
     let keys = ["name", "course_name","grade"];
     for (let i = 0; i < student_array.length; i++) {
         let studentRow = $("<tr>");
@@ -122,10 +126,7 @@ function removeStudent() {
     let indexInStudentArray = $(this).parent().parent().index();
     let studentID = student_array[indexInStudentArray]["id"];
     student_array.splice($(this).parent().index(),1); // Removes the student object entry from the student array
-    $(this).parent()[0].remove(); // Removes the student row from the table
-    console.log("$(this)", $(this));
-    updateData(student_array); // update the data
-    console.log("removeStudent", studentID);
+    $(this).parent().parent().remove(); // Removes the student row from the table
     deleteDataFromServer(studentID); // delete the student from the server based on the student's id; student_id: (id value) => formatting
 }
 function editStudentModal() {
@@ -185,7 +186,9 @@ function editStudentModal() {
     cancelEditButton.text("Cancel");
     let confirmEditButton = $("<button  class='btn btn-primary' data-dismiss='modal'>");
 
-    confirmEditButton.on("click", () => {editStudent(studentInfo)}); // Anonymous function to avoid firing as soon as modal loads
+    confirmEditButton.on("click", () => {
+        editStudent(studentInfo);
+    }); // Anonymous function to avoid firing as soon as modal loads
     confirmEditButton.text("Confirm Edit");
     modalFooter.append(cancelEditButton);
     modalFooter.append(confirmEditButton);
@@ -195,16 +198,27 @@ function editStudentModal() {
     modalFade.append(modalDialog);
 
     $(modalFade).modal("show");
+    // When the modal hides, call the remove method to remove the modal from the DOM which clears the form after use 
+    $(modalFade).on('hidden.bs.modal',() => {
+       $(modalFade).remove();
+    });
 }
+
 /**
 * editStudent - Use information from the modal to send info to the server
 * @param studentObj
  */
 function editStudent(studentObj) {
     // studentObj === studentInfo, contains id of student
-    updateData(student_array);
-    editDataOnServer(studentObj);
-
+    // updateData(student_array);
+    let updatedInfo = {
+        id: studentObj.id,
+        student: $("#name").val(),
+        course: $("#class").val(),
+        score: $("#score").val()
+    };
+    editDataOnServer(updatedInfo);
+    // updatedInfo = null;
 
 }
 /**
@@ -213,41 +227,34 @@ function editStudent(studentObj) {
 function getDataFromServer() {
     // ajax call with data, dataType, method, url, and success function
     $.ajax({
-        //data: dataObject,
         url: "data.php?action=readAll",
         dataType: "json",
         method: "GET",
-        // url: "http://s-apis.learningfuze.com/sgt/get", // /get is the one for reading data from the server
-
         success: function (response) {
-
-            addStudentToDom(response["data"]); // response["data"] gets the array with all the people in it
-            for (let i = 0; i < response["data"].length; i++) {
-                student_array.push(response["data"][i]);
-            }
-            updateData(student_array);
+            updateData(response.data); // response.data is an array of objects
+            // If updateData was not used here, how else would data hit the rest of the program?
         },
         error: (response) => {
-            console.log("Error");
-            console.log(response);
+            console.log("getDataFromServer error, response", response);
         }
     });
 }
 
 function writeDataToServer(student) {
-    let dataObject = {
-        "name": student_array[student_array.length-1]["name"],
-        "course_name": student_array[student_array.length-1]["course_name"],
-        "grade": student_array[student_array.length-1]["grade"]
-    };
-
+    // studentObj contains name, course, and grade
     $.ajax({
-        data: dataObject,
+        data: student,
         dataType: "json",
         method: "POST",
         url: "data.php?action=insert",
         success: function(response) {
-            student.id = response["new_id"];
+            if (response.success === true) {
+                student.id = response.insertID; // give the student an ID
+                getDataFromServer(); // after inserting a student, make a call to the server to get the student list
+            }
+        },
+        error: function(response) {
+            console.log("Failed to add student to database", response);
         }
     });
 }
@@ -262,12 +269,11 @@ function deleteDataFromServer(studentID) {
         method: "POST",
         url: "data.php?action=delete",
         success: function(response) {
-            console.log("deleteDataFromServer function");
-            console.log("response",response);
+            getDataFromServer(); // Following the deletion, DOM needs to be updated
         },
 
         error: function(response) {
-            console.log("ERROR!");
+            console.log("deleteDataFromServer Error; response");
             console.log(response);
         }
     });
@@ -275,33 +281,18 @@ function deleteDataFromServer(studentID) {
 
 function editDataOnServer(studentObj) {
     console.log("editDataOnServer(studentObj) studentObj", studentObj);
-    let updatedStudentInfo = {
-        "id": studentObj.id,
-        "name": $('#name').val(),
-        "course_name": $('#class').val(),
-        "grade": $('#score').val()
-    };
-    console.log("updatedStudentInfo", updatedStudentInfo);
     $.ajax({
-        data: {
-            'id': studentObj.id,
-            'student': updatedStudentInfo.name,
-            'course': updatedStudentInfo.course_name,
-            'score': updatedStudentInfo.grade,
-        },
+        data: studentObj,
         dataType: "json",
         method: "POST",
         url: "data.php?action=update",
         success: (response) => {
             console.log("success response", response);
+            getDataFromServer(); // Update the dom following the edit
         },
         error: (response) => {
             console.log(response);
         }
     });
-    studentObj.id = " "; // Reset the student id, so the function does not target the wrong student
-    studentObj.name = " ";
-    studentObj.course_name = " ";
-    studentObj.grade = " ";
 }
 
