@@ -94,7 +94,7 @@ function addStudentToDom(student_array) {
         $(".studentListTable").append(studentRow);
         let operationsRow = $("<td>");
         let deleteButton = $("<button>").addClass("btn btn-danger").text("Delete");
-        let editButton =$("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='editStudentModal'>");
+        let editButton = $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='editStudentModal'>");
         editButton.css("marginRight", "1em");
         editButton.text("Edit");
         deleteButton.on("click", removeStudent);
@@ -299,5 +299,9 @@ function editDataOnServer(studentObj) {
             console.log(response);
         }
     });
+    studentObj.id = " "; // Reset the student id, so the function does not target the wrong student
+    studentObj.name = " ";
+    studentObj.course_name = " ";
+    studentObj.grade = " ";
 }
 
