@@ -21,7 +21,8 @@ else {
     foreach ($updateFields as $externalField => $internalField) {
         // if the fields are not empty, append the information to the query string
         if (!empty($_POST[$externalField])) {
-            $query .= "`$internalField` = '{$_POST[$externalField]}',";
+            $slashedInput = addslashes($_POST[$externalField]);
+            $query .= "`$internalField` = '{$slashedInput}',";
         }
     }
     $query = substr($query, 0, -1);
