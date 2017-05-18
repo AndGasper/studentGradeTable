@@ -1,8 +1,8 @@
 <?php
 //INSERT INTO `student_data` (`id`, `name`, `grade`, `course_name`) VALUES (NULL, 'bleep', '98', 'blooping');
-$name =$_POST['name'];
-$grade = $_POST['grade'];
-$course = $_POST['course_name'];
+$name = addslashes($_POST['name']);
+$grade = addslashes($_POST['grade']);
+$course = addslashes($_POST['course_name']);
 //check if you have all the data you need from the client-side call.
 //if not, add an appropriate error to errors
 if (empty($name)) $output['errors'][] = 'Please enter name';
