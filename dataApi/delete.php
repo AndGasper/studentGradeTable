@@ -6,7 +6,7 @@ if (empty($id)) {
     $output['errors'][] = 'Please specify a student id';
 }
 //write a query that deletes the student by the given student ID  
-$query = "DELETE FROM `student_data` WHERE `id`=$id;";
+$query = "DELETE FROM `students` WHERE `id`=$id;";
 //send the query to the database, store the result of the query into $result
 $result = mysqli_query($conn, $query);
 //check if $result is empty.

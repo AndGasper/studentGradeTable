@@ -17,11 +17,11 @@ if (empty($id)) {
 }
 else {
 
-    $query = "UPDATE `student_data` SET ";
+    $query = "UPDATE `students` SET ";
     foreach ($updateFields as $externalField => $internalField) {
         // if the fields are not empty, append the information to the query string
         if (!empty($_POST[$externalField])) {
-            $query .= addslashes("(`$internalField` = '{$_POST[$externalField]}',");
+            $query .= "`$internalField` = '{$_POST[$externalField]}',";
         }
     }
     $query = substr($query, 0, -1);
