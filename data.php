@@ -36,7 +36,7 @@ switch($action){
 //convert the $output variable to json, store the result in $outputJSON
 //print $outputJSON
 $outputJSON = json_encode($output);
-//print_r($outputJSON);
+print_r($outputJSON);
 
 //end
 
