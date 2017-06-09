@@ -52,6 +52,7 @@ function clearAddStudentForm(studentName, courseName, studentGrade) {
     $(studentName).val("");
     $(courseName).val("");
     $(studentGrade).val("");
+    $("#studentNameDiv, #studentCourseDiv, #studentGradeDiv").removeClass("has-success");
 }
 /**
  * @name - calculateAverage - loop through the global student array and calculate average grade and return that value
@@ -197,25 +198,25 @@ function editStudentModal() {
     let modalBody = $("<form>").addClass("modal-body");
 
     // Student name input field
-    let modalBodyContentStudent= $("<div class='form-group'>");
+    let modalBodyContentStudent= $("<div class='form-group' id='editNameDiv'>");
     let modalBodyContentStudentNameLabel = $("<label for='Student Name' class='form-control-label'>").text("Student Name");
-    let modalBodyContentStudentName = $("<input type='text' id='name' class='form-control'>").text(studentInfo.name);
+    let modalBodyContentStudentName = $("<input type='text' id='name' class='form-control' onChange='nameValidation()'>").text(studentInfo.name);
     modalBodyContentStudentName.val(studentInfo.name);
     modalBodyContentStudent.append(modalBodyContentStudentNameLabel);
     modalBodyContentStudent.append(modalBodyContentStudentName);
 
     // Student Course input field
-    let modalBodyContentCourse= $("<div class='form-group'>"); // Create form group
+    let modalBodyContentCourse= $("<div class='form-group' id='courseNameDiv'>"); // Create form group
     let modalBodyContentCourseNameLabel = $("<label for='Course name' class='form-control-label'>").text("Course Name"); // Label for course
-    let modalBodyContentCourseName = $("<input type='text' id='course' class='form-control'>");
+    let modalBodyContentCourseName = $("<input type='text' id='editCourse' class='form-control' onChange='courseNameValidation()'>");
     modalBodyContentCourseName.val(studentInfo.course_name);
     modalBodyContentCourse.append(modalBodyContentCourseNameLabel);
     modalBodyContentCourse.append(modalBodyContentCourseName);
 
     //Student Course Grade input field
-    let modalBodyContentGrade = $("<div class='form-group'>");
+    let modalBodyContentGrade = $("<div class='form-group' id='scoreDiv'>");
     let modalBodyContentGradeLabel = $("<label for='Course grade' class='form-control-label'>").text("Course Grade");
-    let modalBodyContentGradeValue = $("<input type='text' id='score' class='form-control'>");
+    let modalBodyContentGradeValue = $("<input type='text' id='editScore' class='form-control' onChange='gradeValidation()'>");
     modalBodyContentGradeValue.val(studentInfo.grade);
     modalBodyContentGrade.append(modalBodyContentGradeLabel);
     modalBodyContentGrade.append(modalBodyContentGradeValue);
@@ -303,8 +304,8 @@ function editStudent(studentObj) {
     let updatedInfo = {
         id: studentObj.id,
         student: $("#name").val(),
-        course: $("#class").val(),
-        score: $("#score").val()
+        course: $("#editCourse").val(),
+        score: $("#editScore").val()
     };
     editDataOnServer(updatedInfo);
 }
@@ -370,10 +371,99 @@ function editDataOnServer(studentObj) {
         method: "POST",
         url: "data.php?action=update",
         success: (response) => {
+            $("#studentNameDiv, #studentCourseDiv, #studentGradeDiv").removeClass("has-success"); // remove the success fields
             getDataFromServer(); // Update the dom following the edit
         },
         error: (response) => {
         }
     });
 }
+
+
+function nameValidation() {
+    const studentName = $("#studentName").val();
+    const editStudentName = $("#name").val();
+    const alphabeticalCharacterRegex = new RegExp('[A-z]','g'); // ascii 65 -> ascii 122; applies to name and course
+
+    // having three inputFeedback divs is a cheap work around for the divs disappearing when trying to append
+    let inputFeedback = $("<div class='nameFeedback'>").addClass("form-control-feedback");
+
+    if (!alphabeticalCharacterRegex.test(studentName) && studentName !== '') {
+        $("#studentNameDiv").addClass("has-danger");
+        ($(".nameFeedback").length === 0) ? $("#studentNameDiv").append(inputFeedback.text("Letters only, please")) : (''); // Ternary to only append once
+        return;
+    } else {
+        $(".nameFeedback").remove();
+        $("#studentNameDiv").removeClass("has-danger");
+        $("#studentNameDiv").addClass("has-success");
+    }
+    if (!alphabeticalCharacterRegex.test(editStudentName)) {
+        $("#editNameDiv").addClass("has-danger");
+        $("#editNameDiv").append(inputFeedback.text("Letters only, please"));
+    } else {
+        $(".nameFeedback").remove();
+        $("#editNameDiv").removeClass("has-danger");
+        $("#editNameDiv").addClass("has-success");
+    }
+
+}
+
+function courseNameValidation() {
+    const alphabeticalCharacterRegex = new RegExp('[A-z]','g'); // ascii 65 -> ascii 122; applies to name and course
+    let inputFeedback2 = $("<div class='courseFeedback'>").addClass("form-control-feedback");
+    const courseName = $("#course").val();
+    const editCourseName = $("#editCourse").val();
+
+    if (!alphabeticalCharacterRegex.test(courseName) && courseName !== '') {
+        $("#studentCourseDiv").addClass("has-danger");
+        ($('.courseFeedback').length === 0) ? $("#studentCourseDiv").append(inputFeedback2.text("Letters only, please")) : ('');
+        return;
+    } else {
+        $(".courseFeedback").remove();
+        $("#studentCourseDiv").removeClass("has-danger");
+        $("#studentCourseDiv").addClass("has-success");
+    }
+    if (!alphabeticalCharacterRegex.test(editCourseName) && editCourseName !== '') {
+        $("#courseNameDiv").addClass("has-danger");
+        ($('.courseFeedback').length === 0) ? $("#courseNameDiv").append(inputFeedback2.text("Letters only, please")) : ('');
+    } else {
+        $(".courseFeedback").remove();
+        $("#courseNameDiv").removeClass("has-danger");
+        $("#courseNameDiv").addClass("has-success");
+    }
+}
+
+function gradeValidation() {
+    let inputFeedback3 = $("<div class='gradeFeedback'>").addClass("form-control-feedback");
+    const gradeRegex = new RegExp('[0-9]', 'g'); // numbers only for course
+    const grade = $("#studentGrade").val();
+    const score = $("#editScore").val();
+    if ((!gradeRegex.test(grade) && grade !== '')) {
+        $("#studentGradeDiv").addClass("has-danger");
+        ($('.gradeFeedback').length === 0) ? $("#studentGradeDiv").append(inputFeedback3.text("Numbers 0-100 only")) : ('');
+        return;
+    } else {
+        $(".gradeFeedback").remove();
+        $("#studentGradeDiv").removeClass("has-danger");
+        $("#studentGradeDiv").addClass("has-success");
+    }
+    if (!gradeRegex.test(score) && score !== '') {
+        $("#scoreDiv").addClass("has-danger");
+        $("#scoreDiv").append(inputFeedback3.text("Numbers 0-100 only"));
+    } else {
+        $(".gradeFeedback").remove();
+        $("#scoreDiv").removeClass("has-danger");
+        $("#scoreDiv").addClass("has-success");
+    }
+}
+
+
+
+
+$(document).ready(function(){
+    $("#studentName").on("change", nameValidation);
+    $("#course").on("change", courseNameValidation);
+    $("#studentGrade").on("change",gradeValidation);
+    // Modal input event handlers are added inline
+});
 
