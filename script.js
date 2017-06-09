@@ -254,6 +254,7 @@ function editStudentModal() {
  */
 
 function serverErrorModal(errorType) {
+    updateData([]); // Empty out the DOM by passing in an empty array. This was designed with the case of deleting the last student in mind.
     var defaultErrorMessage = "There was a problem processing your request."; // Default error message
     //errorType = response.errors array
     switch(errorType[0]) {
@@ -279,7 +280,7 @@ function serverErrorModal(errorType) {
     modalHeader.append(modalTitle);
     modalHeader.append(closeModalButton);
     modalContent.append(modalHeader);
-    let modalFooter = $("<div>").addClass("modal-footer");
+    let modalFooter = $("<div>").addClass("modal-footer"); // No content in the footer, but it gives the modal a nice shape
     modalContent.append(modalFooter);
 
     modalDialog.append(modalContent);
