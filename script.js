@@ -42,8 +42,6 @@ function addStudent() {
             writeDataToServer(student);
         }
     }
-
-
 }
 /**
  * @name - clearAddStudentForm - clears out the form values based on inputIds variable
@@ -390,14 +388,14 @@ function nameValidation() {
 
     if (!alphabeticalCharacterRegex.test(studentName) && studentName !== '') {
         $("#studentNameDiv").addClass("has-danger");
-        ($(".nameFeedback").length === 0) ? $("#studentNameDiv").append(inputFeedback.text("Letters only, please")) : (''); // Ternary to only append once
+        ($(".nameFeedback").length === 0) ? $("#studentNameDiv").append(inputFeedback.text("Names must contain at least 2 characters")) : (''); // Ternary to only append once
         return;
     } else {
         $(".nameFeedback").remove();
         $("#studentNameDiv").removeClass("has-danger");
         $("#studentNameDiv").addClass("has-success");
     }
-    if (!alphabeticalCharacterRegex.test(editStudentName)) {
+    if (!alphabeticalCharacterRegex.test(editStudentName) && editStudentName !== '') {
         $("#editNameDiv").addClass("has-danger");
         $("#editNameDiv").append(inputFeedback.text("Letters only, please"));
     } else {
@@ -416,16 +414,16 @@ function courseNameValidation() {
 
     if (!alphabeticalCharacterRegex.test(courseName) && courseName !== '') {
         $("#studentCourseDiv").addClass("has-danger");
-        ($('.courseFeedback').length === 0) ? $("#studentCourseDiv").append(inputFeedback2.text("Letters only, please")) : ('');
+        ($('.courseFeedback').length === 0) ? $("#studentCourseDiv").append(inputFeedback2.text("Valid course names are less than 20 characters and contain at least one letter")) : ('');
         return;
     } else {
         $(".courseFeedback").remove();
         $("#studentCourseDiv").removeClass("has-danger");
         $("#studentCourseDiv").addClass("has-success");
     }
-    if (!alphabeticalCharacterRegex.test(editCourseName) && editCourseName !== '') {
+    if (!alphabeticalCharacterRegex.test(editCourseName) && editCourseName !== '' ) {
         $("#courseNameDiv").addClass("has-danger");
-        ($('.courseFeedback').length === 0) ? $("#courseNameDiv").append(inputFeedback2.text("Letters only, please")) : ('');
+        ($('.courseFeedback').length === 0) ? $("#courseNameDiv").append(inputFeedback2.text("Valid course names are less than 20 characters and contain at least one letter")) : ('');
     } else {
         $(".courseFeedback").remove();
         $("#courseNameDiv").removeClass("has-danger");
@@ -438,18 +436,18 @@ function gradeValidation() {
     const gradeRegex = new RegExp('[0-9]', 'g'); // numbers only for course
     const grade = $("#studentGrade").val();
     const score = $("#editScore").val();
-    if ((!gradeRegex.test(grade) && grade !== '')) {
+    if ((!gradeRegex.test(grade) && grade !== '') || grade.length > 3) {
         $("#studentGradeDiv").addClass("has-danger");
-        ($('.gradeFeedback').length === 0) ? $("#studentGradeDiv").append(inputFeedback3.text("Numbers 0-100 only")) : ('');
+        ($('.gradeFeedback').length === 0) ? $("#studentGradeDiv").append(inputFeedback3.text("Whole numbers between 0-100 only")) : ('');
         return;
     } else {
         $(".gradeFeedback").remove();
         $("#studentGradeDiv").removeClass("has-danger");
         $("#studentGradeDiv").addClass("has-success");
     }
-    if (!gradeRegex.test(score) && score !== '') {
+    if (!gradeRegex.test(score) && score !== '' || score.length > 3) {
         $("#scoreDiv").addClass("has-danger");
-        $("#scoreDiv").append(inputFeedback3.text("Numbers 0-100 only"));
+        $("#scoreDiv").append(inputFeedback3.text("Whole numbers between 0-100 only"));
     } else {
         $(".gradeFeedback").remove();
         $("#scoreDiv").removeClass("has-danger");
