@@ -19,15 +19,14 @@ function addClicked() {
     addStudent();
 };
 /**
- * cancelClicked - Event Handler when user clicks the cancel button, should clear out student form
+ * @name - cancelClicked - Event Handler when user clicks the cancel button, should clear out student form
  */
 function cancelClicked() {
     clearAddStudentForm($("#studentName"),$("#course"),$("#studentGrade"));
 };
 
 /**
- * addStudent - creates a student objects based on input fields in the form and adds the object to global student array
- *
+ * @mname - addStudent - creates a student objects based on input fields in the form and adds the object to global student array
  * @return undefined
  */
 function addStudent() {
@@ -47,7 +46,7 @@ function addStudent() {
 
 }
 /**
- * clearAddStudentForm - clears out the form values based on inputIds variable
+ * @name - clearAddStudentForm - clears out the form values based on inputIds variable
  */
 function clearAddStudentForm(studentName, courseName, studentGrade) {
     $(studentName).val("");
@@ -55,7 +54,7 @@ function clearAddStudentForm(studentName, courseName, studentGrade) {
     $(studentGrade).val("");
 }
 /**
- * calculateAverage - loop through the global student array and calculate average grade and return that value
+ * @name - calculateAverage - loop through the global student array and calculate average grade and return that value
  * @returns {number}
  */
 function calculateAverage(student_array) {
@@ -80,9 +79,6 @@ function updateData(arrayOfStudentObj) {
     addStudentToDom(student_array);
 }
 
-/**
- * updateStudentList - loops through global student array and appends each objects data into the student-list-container > list-body
- */
 
 /**
  * addStudentToDom - take in a student object, create html elements from the values and then append the elements
@@ -116,7 +112,7 @@ function addStudentToDom(student_array) {
     }
 }
 /**
- * reset - resets the application to initial state. Global variables reset, DOM get reset to initial load state
+ * @name - reset - resets the application to initial state. Global variables reset, DOM get reset to initial load state
  */
 function reset() {
     student_array = [];
@@ -125,15 +121,18 @@ function reset() {
     studentGrade = $("#studentGrade").val("");
 }
 /**
- * removeStudent function that removes the object in the student_array
+ * @name - removeStudent - removes the student object from the student_array
+ * @param studentInfo
  */
-
 function removeStudent(studentInfo) {
 
     let studentID = student_array[studentInfo]["id"];
     deleteDataFromServer(studentID); // delete the student from the server based on the student's id; student_id: (id value) => formatting
 }
 
+/**
+ * @name - removeStudentModal
+ */
 function removeStudentModal() {
     let indexInStudentArray = $(this).parent().parent().index(); // To know who to delete
     // Modal frame
@@ -173,7 +172,9 @@ function removeStudentModal() {
         $(modalFade).remove();
     });
 }
-
+/**
+ * @name - editStudentModal
+ */
 function editStudentModal() {
 
     let studentInfo = student_array[$(this).parent().parent().index()];
@@ -249,17 +250,28 @@ function editStudentModal() {
 
 /**
  * @name - serverErrorModal - Modal with contextual message appears on screen following server-side error.
- * @param errorType {string}
+ * @param errorType {array}
  */
 
 function serverErrorModal(errorType) {
+    var defaultErrorMessage = "There was a problem processing your request."; // Default error message
+    //errorType = response.errors array
+    switch(errorType[0]) {
+        case("no data"):
+            var errorMessage = "Looks like the roster is empty! Add a student to explore more features"; // var instead of let because of scoping, and var instead of const because const cannot be reassigned.
+            break;
+
+        default:
+            errorMessage = defaultErrorMessage; // A little redundant but explicit
+
+    }
 
     // Modal frame
     let modalFade = $("<div class='modal fade' id='serverErrorModal' tabindex='-1' role='dialog' aria-labelledby='serverErrorModalLabel' aria-hidden='true'>");
     let modalDialog = $("<div class='modal-dialog' role='document'>");
-    let modalContent = $("<div>").addClass("modal-content").text("Modal content"); // Modal content
-    let modalHeader = $("<div>").addClass("modal-header").text("Modal header"); // Modal header
-    let modalTitle = $("<div>").addClass("modal-title").text("Modal title");
+    let modalContent = $("<div>").addClass("modal-content"); // Modal content
+    let modalHeader = $("<div>").addClass("modal-header").text(errorMessage); // Modal header
+    let modalTitle = $("<div>").addClass("modal-title");
     let closeModalButton = $("<button type='button' class='close' data-dismiss='modal' aria-label='Close'>");
     let closeModalButtonSymbol = $("<span aria-hidden='true'>").text("x");
     closeModalButton.append(closeModalButtonSymbol);
@@ -267,13 +279,7 @@ function serverErrorModal(errorType) {
     modalHeader.append(modalTitle);
     modalHeader.append(closeModalButton);
     modalContent.append(modalHeader);
-
-
     let modalFooter = $("<div>").addClass("modal-footer");
-    let cancelDeleteButton = $("<button class='btn btn-secondary' data-dismiss='modal'>");
-    cancelDeleteButton.text("Cancel");
-
-
     modalContent.append(modalFooter);
 
     modalDialog.append(modalContent);
@@ -288,12 +294,11 @@ function serverErrorModal(errorType) {
 }
 
 /**
-* editStudent - Use information from the modal to send info to the server
+* @name - editStudent - Use information from the modal to send info to the server
 * @param studentObj
  */
 function editStudent(studentObj) {
     // studentObj === studentInfo, contains id of student
-    // updateData(student_array);
     let updatedInfo = {
         id: studentObj.id,
         student: $("#name").val(),
@@ -301,12 +306,9 @@ function editStudent(studentObj) {
         score: $("#score").val()
     };
     editDataOnServer(updatedInfo);
-    // updatedInfo = null;
-
 }
 /**
  * getDataFromServer - Get student data from the server; Notify user if no data is available
- *
  */
 function getDataFromServer() {
     // ajax call with data, dataType, method, url, and success function
@@ -315,7 +317,7 @@ function getDataFromServer() {
         dataType: "json",
         method: "GET",
         success: function (response) {
-            (response.success) ? (updateData(response.data)) : (serverErrorModal(response)); // response.data is an array of objects)
+            (response.success) ? (updateData(response.data)) : (serverErrorModal(response.errors)); // response.data is an array of objects)
 
 
         },
