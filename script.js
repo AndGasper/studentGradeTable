@@ -139,8 +139,8 @@ function removeStudentModal() {
     // Modal frame
     let modalFade = $("<div class='modal fade' id='editStudentModal' tabindex='-1' role='dialog' aria-labelledby='editStudentModalLabel' aria-hidden='true'>");
     let modalDialog = $("<div class='modal-dialog' role='document'>");
-    let modalContent = $("<div>").addClass("modal-content");
-    let modalHeader = $("<div>").addClass("modal-header");// .text("Modal Header");
+    let modalContent = $("<div>").addClass("modal-content"); // Modal content
+    let modalHeader = $("<div>").addClass("modal-header"); // Modal header
     let modalTitle = $("<div>").addClass("modal-title").text("Are you sure you want to remove this student?");
     let closeModalButton = $("<button type='button' class='close' data-dismiss='modal' aria-label='Close'>");
     let closeModalButtonSymbol = $("<span aria-hidden='true'>").text("x");
@@ -204,12 +204,12 @@ function editStudentModal() {
     modalBodyContentStudent.append(modalBodyContentStudentName);
 
     // Student Course input field
-    let modalBodyContentCourse= $("<div class='form-group'>");
-    let modalBodyContentCourseNameLabel = $("<label for='Course name' class='form-control-label'>").text("Course Name");
-    let modalBodyContentCourseName = $("<input type='text' id='class' class='form-control'>");
+    let modalBodyContentCourse= $("<div class='form-group'>"); // Create form group
+    let modalBodyContentCourseNameLabel = $("<label for='Course name' class='form-control-label'>").text("Course Name"); // Label for course
+    let modalBodyContentCourseName = $("<input type='text' id='course' class='form-control'>");
     modalBodyContentCourseName.val(studentInfo.course_name);
     modalBodyContentCourse.append(modalBodyContentCourseNameLabel);
-    modalBodyContentCourse.append(modalBodyContentCourse);
+    modalBodyContentCourse.append(modalBodyContentCourseName);
 
     //Student Course Grade input field
     let modalBodyContentGrade = $("<div class='form-group'>");
@@ -220,7 +220,7 @@ function editStudentModal() {
     modalBodyContentGrade.append(modalBodyContentGradeValue);
 
     modalBody.append(modalBodyContentStudent);
-    modalBody.append(modalBodyContentCourseName);
+    modalBody.append(modalBodyContentCourse);
     modalBody.append(modalBodyContentGrade);
     modalContent.append(modalBody);
 
@@ -248,6 +248,46 @@ function editStudentModal() {
 }
 
 /**
+ * @name - serverErrorModal - Modal with contextual message appears on screen following server-side error.
+ * @param errorType {string}
+ */
+
+function serverErrorModal(errorType) {
+
+    // Modal frame
+    let modalFade = $("<div class='modal fade' id='serverErrorModal' tabindex='-1' role='dialog' aria-labelledby='serverErrorModalLabel' aria-hidden='true'>");
+    let modalDialog = $("<div class='modal-dialog' role='document'>");
+    let modalContent = $("<div>").addClass("modal-content").text("Modal content"); // Modal content
+    let modalHeader = $("<div>").addClass("modal-header").text("Modal header"); // Modal header
+    let modalTitle = $("<div>").addClass("modal-title").text("Modal title");
+    let closeModalButton = $("<button type='button' class='close' data-dismiss='modal' aria-label='Close'>");
+    let closeModalButtonSymbol = $("<span aria-hidden='true'>").text("x");
+    closeModalButton.append(closeModalButtonSymbol);
+
+    modalHeader.append(modalTitle);
+    modalHeader.append(closeModalButton);
+    modalContent.append(modalHeader);
+
+
+    let modalFooter = $("<div>").addClass("modal-footer");
+    let cancelDeleteButton = $("<button class='btn btn-secondary' data-dismiss='modal'>");
+    cancelDeleteButton.text("Cancel");
+
+
+    modalContent.append(modalFooter);
+
+    modalDialog.append(modalContent);
+    modalFade.append(modalDialog);
+
+    $(modalFade).modal("show");
+    // When the modal hides, call the remove method to remove the modal from the DOM
+    $(modalFade).on('hidden.bs.modal',() => {
+        $(modalFade).remove();
+    });
+
+}
+
+/**
 * editStudent - Use information from the modal to send info to the server
 * @param studentObj
  */
@@ -265,7 +305,8 @@ function editStudent(studentObj) {
 
 }
 /**
- * getDataFromServer - Get student daa from the server
+ * getDataFromServer - Get student data from the server; Notify user if no data is available
+ *
  */
 function getDataFromServer() {
     // ajax call with data, dataType, method, url, and success function
@@ -274,8 +315,9 @@ function getDataFromServer() {
         dataType: "json",
         method: "GET",
         success: function (response) {
-            updateData(response.data); // response.data is an array of objects
-            // If updateData was not used here, how else would data hit the rest of the program?
+            (response.success) ? (updateData(response.data)) : (serverErrorModal(response)); // response.data is an array of objects)
+
+
         },
         error: (response) => {
         }
