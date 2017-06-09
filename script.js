@@ -35,13 +35,27 @@ function addStudent() {
         "course_name": $("#course").val(),
         "grade": $("#studentGrade").val()
     };
+    if (student.name === '' && student.course_name === '' && student.grade === '') {
+        $("#studentNameDiv").addClass('has-warning');
+        $("#studentCourseDiv").addClass('has-warning');
+        $("#studentGradeDiv").addClass('has-warning');
+
+    }
     if (student.name !== '' && student.course_name !== '' && student.grade !== '') {
         if (student.name.length > 2 && (student.course_name.length > 0 && student.course_name.length <= 20) && (parseInt(student.grade) >= 0 && parseInt(student.grade) <= 100)) {
             student_array.push(student);
             clearAddStudentForm($("#studentName"), $("#course"), $("#studentGrade"));
             writeDataToServer(student);
+        } else {
+            if (student.course_name.length > 20) {
+                $("#studentCourseDiv").addClass('has-warning');
+            }
+            if (parseInt(student.grade) > 100) {
+                $("#studentGradeDiv").addClass('has-warning');
+            }
         }
     }
+
 }
 /**
  * @name - clearAddStudentForm - clears out the form values based on inputIds variable
@@ -50,7 +64,22 @@ function clearAddStudentForm(studentName, courseName, studentGrade) {
     $(studentName).val("");
     $(courseName).val("");
     $(studentGrade).val("");
-    $("#studentNameDiv, #studentCourseDiv, #studentGradeDiv").removeClass("has-success");
+    $("#studentNameDiv").removeClass('has-danger');
+    $("#studentNameDiv").removeClass('has-warning');
+
+    $("#studentCourseDiv").removeClass("has-danger");
+    $("#studentCourseDiv").removeClass("has-warning");
+
+    $("#studentGradeDiv").removeClass("has-danger");
+    $("#studentGradeDiv").removeClass("has-warning");
+
+    $("#studentNameDiv").removeClass('has-success');
+    $("#studentGradeDiv").removeClass("has-success");
+    $("#studentCourseDiv").removeClass("has-success");
+
+    $(".nameFeedback").remove();
+    $(".gradeFeedback").remove();
+    $(".courseFeedback").remove();
 }
 /**
  * @name - calculateAverage - loop through the global student array and calculate average grade and return that value
@@ -118,6 +147,7 @@ function reset() {
     studentName = $("#studentName").val("");
     courseName = $("#course").val("");
     studentGrade = $("#studentGrade").val("");
+
 }
 /**
  * @name - removeStudent - removes the student object from the student_array
@@ -305,7 +335,18 @@ function editStudent(studentObj) {
         course: $("#editCourse").val(),
         score: $("#editScore").val()
     };
-    editDataOnServer(updatedInfo);
+    if (updatedInfo.student === '' && updatedInfo.course === '' && updatedInfo.score === '') {
+        $("#editNameDiv").addClass('has-warning');
+        $("#courseNameDiv").addClass('has-warning');
+        $("#scoreDiv").addClass('has-warning');
+
+    }
+    if (updatedInfo.student !== '' && updatedInfo.course !== '' && updatedInfo.score !== '') {
+        if ((updatedInfo.student.length > 2 && !parseInt(updatedInfo.student)) && (updatedInfo.course.length > 0 && updatedInfo.course.length <= 20) && (parseInt(updatedInfo.score) >= 0 && parseInt(updatedInfo.score) <= 100)) {
+            editDataOnServer(updatedInfo);
+        }
+    }
+
 }
 /**
  * getDataFromServer - Get student data from the server; Notify user if no data is available
@@ -393,6 +434,7 @@ function nameValidation() {
     } else {
         $(".nameFeedback").remove();
         $("#studentNameDiv").removeClass("has-danger");
+        $("#studentNameDiv").removeClass("has-warning");
         $("#studentNameDiv").addClass("has-success");
     }
     if (!alphabeticalCharacterRegex.test(editStudentName) && editStudentName !== '') {
@@ -401,6 +443,7 @@ function nameValidation() {
     } else {
         $(".nameFeedback").remove();
         $("#editNameDiv").removeClass("has-danger");
+        $("#editNameDiv").removeClass("has-warning");
         $("#editNameDiv").addClass("has-success");
     }
 
@@ -413,12 +456,14 @@ function courseNameValidation() {
     const editCourseName = $("#editCourse").val();
 
     if (!alphabeticalCharacterRegex.test(courseName) && courseName !== '') {
+
         $("#studentCourseDiv").addClass("has-danger");
         ($('.courseFeedback').length === 0) ? $("#studentCourseDiv").append(inputFeedback2.text("Valid course names are less than 20 characters and contain at least one letter")) : ('');
         return;
     } else {
         $(".courseFeedback").remove();
         $("#studentCourseDiv").removeClass("has-danger");
+        $("#studentCourseDiv").removeClass("has-warning");
         $("#studentCourseDiv").addClass("has-success");
     }
     if (!alphabeticalCharacterRegex.test(editCourseName) && editCourseName !== '' ) {
@@ -427,6 +472,7 @@ function courseNameValidation() {
     } else {
         $(".courseFeedback").remove();
         $("#courseNameDiv").removeClass("has-danger");
+        $("#courseNameDiv").removeClass("has-warning");
         $("#courseNameDiv").addClass("has-success");
     }
 }
@@ -443,6 +489,7 @@ function gradeValidation() {
     } else {
         $(".gradeFeedback").remove();
         $("#studentGradeDiv").removeClass("has-danger");
+        $("#studentGradeDiv").removeClass("has-warning");
         $("#studentGradeDiv").addClass("has-success");
     }
     if (!gradeRegex.test(score) && score !== '' || score.length > 3) {
@@ -451,6 +498,7 @@ function gradeValidation() {
     } else {
         $(".gradeFeedback").remove();
         $("#scoreDiv").removeClass("has-danger");
+        $("#scoreDiv").removeClass("has-warning");
         $("#scoreDiv").addClass("has-success");
     }
 }
