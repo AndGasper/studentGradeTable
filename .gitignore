@@ -1,5 +1,6 @@
 .DS_Store
 .idea
-README.md
+
 /SGT/dataApi/mysql_connect.php
 /dataApi/mysql_connect.php
+!/README.md
