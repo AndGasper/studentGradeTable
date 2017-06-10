@@ -10,7 +10,7 @@ if(empty($action)){
 @@require('dataApi/mysql_connect.php');
 
 $output = [
-	'success'=> false, //we assume we will fail
+	'success'=> false, // we assume we will fail
 	'errors'=>[]
 ];
 /*do a comparison switch on the get superglobal action*/
