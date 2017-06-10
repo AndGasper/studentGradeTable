@@ -1,9 +1,14 @@
 <?php
+
+
 $id = $_POST['id'];
-//check if you have all the data you need from the client-side call.  
-//if not, add an appropriate error to errors
 if (empty($id)) {
     $output['errors'][] = 'Please specify a student id';
+    return;
+}
+if (!ctype_digit($id)) {
+    $output['errors'][] = "Please specify a student id";
+    return;
 }
 //write a query that deletes the student by the given student ID  
 $query = "DELETE FROM `students` WHERE `id`=$id;";
