@@ -26,7 +26,7 @@ function cancelClicked() {
 };
 
 /**
- * @mname - addStudent - creates a student objects based on input fields in the form and adds the object to global student array
+ * @name - addStudent - creates a student objects based on input fields in the form and adds the object to global student array
  * @return undefined
  */
 function addStudent() {
@@ -35,14 +35,25 @@ function addStudent() {
         "course_name": $("#course").val(),
         "grade": $("#studentGrade").val()
     };
+
+    let nameFeedback = $("<div class='nameFeedback'>").addClass("form-control-feedback").text("Names must be at least two (2) characters long");
+    let courseFeedback = $("<div class='courseFeedback'>").addClass("form-control-feedback").text("Valid course names are less than twenty (20) characters and contain at least one letter");
+    let gradeFeedback = $("<div class='gradeFeedback'>").addClass("form-control-feedback").text("Whole numbers between 0-100 only");
     if (student.name === '' && student.course_name === '' && student.grade === '') {
+
+        // Warn the user about empty fields
         $("#studentNameDiv").addClass('has-warning');
+        $("#studentNameDiv").append(nameFeedback);
+        //Warn the user about empty course fields
         $("#studentCourseDiv").addClass('has-warning');
+        $("#studentCourseDiv").append(courseFeedback);
+
         $("#studentGradeDiv").addClass('has-warning');
+        $("#studentGradeDiv").append(gradeFeedback);
 
     }
     if (student.name !== '' && student.course_name !== '' && student.grade !== '') {
-        if (student.name.length > 2 && (student.course_name.length > 0 && student.course_name.length <= 20) && (parseInt(student.grade) >= 0 && parseInt(student.grade) <= 100)) {
+        if (student.name.length >= 2 && (student.course_name.length > 0 && student.course_name.length <= 20) && (parseInt(student.grade) >= 0 && parseInt(student.grade) <= 100)) {
             student_array.push(student);
             clearAddStudentForm($("#studentName"), $("#course"), $("#studentGrade"));
             writeDataToServer(student);
@@ -263,7 +274,12 @@ function editStudentModal() {
     let modalFooter = $("<div>").addClass("modal-footer");
     let cancelEditButton = $("<button class='btn btn-secondary' data-dismiss='modal'>");
     cancelEditButton.text("Cancel");
+    cancelEditButton.on("click", () => {
+        $("#studentNameDiv, #studentCourseDiv, #studentGradeDiv").removeClass("has-success")
+    }); // remove the success fields
+
     let confirmEditButton = $("<button  class='btn btn-primary' data-dismiss='modal'>");
+
 
     confirmEditButton.on("click", () => {
         editStudent(studentInfo);
@@ -428,14 +444,14 @@ function editDataOnServer(studentObj) {
 function nameValidation() {
     const studentName = $("#studentName").val();
     const editStudentName = $("#name").val();
-    const alphabeticalCharacterRegex = new RegExp('[A-z]','g'); // ascii 65 -> ascii 122; applies to name and course
+    const alphabeticalCharacterRegex = new RegExp('[A-z]{2,}','g'); // ascii 65 -> ascii 122; applies to name and course
 
     // having three inputFeedback divs is a cheap work around for the divs disappearing when trying to append
     let inputFeedback = $("<div class='nameFeedback'>").addClass("form-control-feedback");
 
     if (!alphabeticalCharacterRegex.test(studentName) && studentName !== '') {
         $("#studentNameDiv").addClass("has-danger");
-        ($(".nameFeedback").length === 0) ? $("#studentNameDiv").append(inputFeedback.text("Names must contain at least 2 characters")) : (''); // Ternary to only append once
+        ($(".nameFeedback").length === 0) ? $("#studentNameDiv").append(inputFeedback.text("Names must contain at least two (2) characters")) : (''); // Ternary to only append once
         return;
     } else {
         $(".nameFeedback").remove();
@@ -461,20 +477,23 @@ function courseNameValidation() {
     const courseName = $("#course").val();
     const editCourseName = $("#editCourse").val();
 
-    if (!alphabeticalCharacterRegex.test(courseName) && courseName !== '') {
+    // course name is not empty, and the field is not just empty;
+    if ((!alphabeticalCharacterRegex.test(courseName) && courseName !== '') || courseName.length > 20) {
 
         $("#studentCourseDiv").addClass("has-danger");
-        ($('.courseFeedback').length === 0) ? $("#studentCourseDiv").append(inputFeedback2.text("Valid course names are less than 20 characters and contain at least one letter")) : ('');
+        ($('.courseFeedback').length === 0) ? $("#studentCourseDiv").append(inputFeedback2.text("Valid course names are less than twenty (20) characters and contain at least one letter")) : ('');
         return;
     } else {
-        $(".courseFeedback").remove();
-        $("#studentCourseDiv").removeClass("has-danger");
-        $("#studentCourseDiv").removeClass("has-warning");
-        $("#studentCourseDiv").addClass("has-success");
+        $(".courseFeedback").remove(); // Remove the feed back text
+        $("#studentCourseDiv").removeClass("has-danger"); // Remove danger highlight
+        $("#studentCourseDiv").removeClass("has-warning"); // Remove warning highlight
+        (courseName !== '') ? $("#studentCourseDiv").addClass("has-success") : $("#studentCourseDiv").removeClass("has-success"); // Add success only if the field is not empty
     }
-    if (!alphabeticalCharacterRegex.test(editCourseName) && editCourseName !== '' ) {
+    // edit course name modal
+    // editCourseName !== undefined to prevent checking .length of undefined. Quick and dirty way
+    if ((!alphabeticalCharacterRegex.test(editCourseName) && editCourseName !== '') || (editCourseName !== undefined ? editCourseName.length > 20 : '')) {
         $("#courseNameDiv").addClass("has-danger");
-        ($('.courseFeedback').length === 0) ? $("#courseNameDiv").append(inputFeedback2.text("Valid course names are less than 20 characters and contain at least one letter")) : ('');
+        ($('.courseFeedback').length === 0) ? $("#courseNameDiv").append(inputFeedback2.text("Valid course names are less than twenty (20) characters and contain at least one letter")) : ('');
     } else {
         $(".courseFeedback").remove();
         $("#courseNameDiv").removeClass("has-danger");
@@ -488,7 +507,8 @@ function gradeValidation() {
     const gradeRegex = new RegExp('[0-9]', 'g'); // numbers only for course
     const grade = $("#studentGrade").val();
     const score = $("#editScore").val();
-    if ((!gradeRegex.test(grade) && grade !== '') || grade.length > 3) {
+    // if the grade contains at least
+    if ((!gradeRegex.test(grade) && grade !== '') || grade.length > 3 || (parseInt(grade) > 100 || parseInt(grade) < 0)) {
         $("#studentGradeDiv").addClass("has-danger");
         ($('.gradeFeedback').length === 0) ? $("#studentGradeDiv").append(inputFeedback3.text("Whole numbers between 0-100 only")) : ('');
         return;
@@ -498,7 +518,7 @@ function gradeValidation() {
         $("#studentGradeDiv").removeClass("has-warning");
         $("#studentGradeDiv").addClass("has-success");
     }
-    if (!gradeRegex.test(score) && score !== '' || score.length > 3) {
+    if (!gradeRegex.test(score) && score !== '' || score.length > 3 || (parseInt(score) > 100 || parseInt(score) < 0)) {
         $("#scoreDiv").addClass("has-danger");
         $("#scoreDiv").append(inputFeedback3.text("Whole numbers between 0-100 only"));
     } else {
@@ -516,6 +536,9 @@ $(document).ready(function(){
     $("#studentName").on("change", nameValidation);
     $("#course").on("change", courseNameValidation);
     $("#studentGrade").on("change",gradeValidation);
+    getDataFromServer(); // Get data from server as soon as page loads
     // Modal input event handlers are added inline
 });
+
+
 
