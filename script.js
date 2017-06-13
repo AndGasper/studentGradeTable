@@ -274,9 +274,6 @@ function editStudentModal() {
     let modalFooter = $("<div>").addClass("modal-footer");
     let cancelEditButton = $("<button class='btn btn-secondary' data-dismiss='modal'>");
     cancelEditButton.text("Cancel");
-    cancelEditButton.on("click", () => {
-        $("#studentNameDiv, #studentCourseDiv, #studentGradeDiv").removeClass("has-success")
-    }); // remove the success fields
 
     let confirmEditButton = $("<button  class='btn btn-primary' data-dismiss='modal'>");
 
@@ -296,6 +293,7 @@ function editStudentModal() {
     // When the modal hides, call the remove method to remove the modal from the DOM which clears the form after use
     $(modalFade).on('hidden.bs.modal',() => {
        $(modalFade).remove();
+        $("#studentNameDiv, #studentCourseDiv, #studentGradeDiv").removeClass("has-success");
     });
 }
 
@@ -385,6 +383,7 @@ function getDataFromServer() {
 
         },
         error: (response) => {
+            serverErrorModal(["uh oh"]); // In case of error, show a generic something was wrong modal
         }
     });
 }
@@ -403,6 +402,7 @@ function writeDataToServer(student) {
             }
         },
         error: function(response) {
+            serverErrorModal(["uh oh"]); // In case of error, show a generic something was wrong modal
         }
     });
 }
@@ -421,6 +421,7 @@ function deleteDataFromServer(studentID) {
         },
 
         error: function(response) {
+            serverErrorModal(["uh oh"]); // In case of error, show a generic something was wrong modal
         }
     });
 }
@@ -436,6 +437,7 @@ function editDataOnServer(studentObj) {
             getDataFromServer(); // Update the dom following the edit
         },
         error: (response) => {
+            serverErrorModal(["uh oh"]); // In case of error, show a generic something was wrong modal
         }
     });
 }
