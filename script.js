@@ -372,23 +372,32 @@ function editStudent(studentObj) {
  * getDataFromServer - Get student data from the server; Notify user if no data is available
  */
 function getDataFromServer() {
+
+    let pendingAlert = $("<div class='alert alert-info' style='text-align: center'>").append('<strong>Loading students</strong>');
+    $("body").append(pendingAlert);
+
+
     // ajax call with data, dataType, method, url, and success function
     $.ajax({
         url: "data.php?action=readAll",
         dataType: "json",
         method: "GET",
         success: function (response) {
+            $('.alert').remove(); // Remove the alert regardless of success or failure
             (response.success) ? (updateData(response.data)) : (serverErrorModal(response.errors)); // response.data is an array of objects)
 
 
         },
         error: (response) => {
+            $('.alert').remove(); // Remove the alert regardless of success or failure
             serverErrorModal(["uh oh"]); // In case of error, show a generic something was wrong modal
         }
     });
 }
 
 function writeDataToServer(student) {
+    let pendingAlert = $("<div class='alert alert-warning' style='text-align: center'>").append('<strong>Adding student</strong>');
+    $("body").append(pendingAlert);
     // studentObj contains name, course, and grade
     $.ajax({
         data: student,
@@ -396,12 +405,14 @@ function writeDataToServer(student) {
         method: "POST",
         url: "data.php?action=insert",
         success: function(response) {
+            $('.alert').remove(); // Remove the alert regardless of success or failure
             if (response.success === true) {
                 student.id = response.insertID; // give the student an ID
                 getDataFromServer(); // after inserting a student, make a call to the server to get the student list
             }
         },
         error: function(response) {
+            $('.alert').remove(); // Remove the alert regardless of success or failure
             serverErrorModal(["uh oh"]); // In case of error, show a generic something was wrong modal
         }
     });
@@ -411,32 +422,40 @@ function deleteDataFromServer(studentID) {
     let dataObject = {
         "id": studentID
     };
+    let pendingAlert = $("<div class='alert alert-danger' style='text-align: center'>").append('<strong>Removing student</strong>');
+    $("body").append(pendingAlert);
     $.ajax({
         data: dataObject,
         dataType: "json",
         method: "POST",
         url: "data.php?action=delete",
         success: function(response) {
+            $('.alert').remove(); // Remove the alert regardless of success or failure
             getDataFromServer(); // Following the deletion, DOM needs to be updated
         },
 
         error: function(response) {
+            $('.alert').remove(); // Remove the alert regardless of success or failure
             serverErrorModal(["uh oh"]); // In case of error, show a generic something was wrong modal
         }
     });
 }
 
 function editDataOnServer(studentObj) {
+    let pendingAlert = $("<div class='alert alert-warning' style='text-align: center'>").append('<strong>Editing student information</strong>');
+    $("body").append(pendingAlert);
     $.ajax({
         data: studentObj,
         dataType: "json",
         method: "POST",
         url: "data.php?action=update",
         success: (response) => {
+            $('.alert').remove(); // Remove the alert regardless of success or failure
             $("#studentNameDiv, #studentCourseDiv, #studentGradeDiv").removeClass("has-success"); // remove the success fields
             getDataFromServer(); // Update the dom following the edit
         },
         error: (response) => {
+            $('.alert').remove(); // Remove the alert regardless of success or failure
             serverErrorModal(["uh oh"]); // In case of error, show a generic something was wrong modal
         }
     });
