@@ -83,16 +83,22 @@ function clearAddStudentForm(studentName, courseName, studentGrade) {
 }
 /**
  * @name - calculateAverage - loop through the global student array and calculate average grade and return that value
- * @returns {number}
+ * @returns {string | number} => string if there are no students; number if there are students
  */
 function calculateAverage(student_array) {
-    let total = 0;
-    for (let i = 0; i <= student_array.length -1; i++) {
-        total += parseFloat(student_array[i]["grade"]);
+    if (student_array.length === 0) {
+
+        $(".avgGrade").text("0");
+        return "0";
+    } else {
+        let total = 0;
+        for (let i = 0; i <= student_array.length -1; i++) {
+            total += parseFloat(student_array[i]["grade"]);
+        }
+        let average = Math.floor(total/student_array.length);
+        $(".avgGrade").text(average);
+        return average;
     }
-    let average = Math.floor(total/student_array.length);
-    $(".avgGrade").text(average);
-    return average;
 }
 /**
  * updateData - centralized function to update the average and call student list update
